@@ -75,11 +75,10 @@
 
         .header { background: var(--header-bg); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; box-shadow: var(--card-shadow); }
         .user-info { display: flex; align-items: center; gap: 12px; font-weight: bold; }
-        .header-menu-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .header-actions { display: flex; align-items: center; gap: 8px; }
         .theme-toggle-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
 
-        .sidebar-overlay, .modal { 
+        .modal { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(0, 0, 0, 0.6) !important; 
             z-index: 1500; 
@@ -92,39 +91,7 @@
             transition: opacity 0.3s ease, visibility 0.3s ease; 
         }
 
-        [data-theme="dark"] .sidebar-overlay, 
         [data-theme="dark"] .modal { background: rgba(0, 0, 0, 0.8) !important; }
-        .sidebar-overlay { z-index: 2000; }
-
-        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-bg); z-index: 2001; box-shadow: 4px 0 15px rgba(0,0,0,0.2); transition: left 0.3s ease; display: flex; flex-direction: column; }
-        .sidebar.open { left: 0; }
-        .sidebar-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
-        .sidebar-header { background: var(--header-bg); color: white; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .sidebar-title { font-weight: bold; font-size: 16px; }
-        .sidebar-close { background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; }
-        .sidebar-menu-scrollable { list-style: none; flex-grow: 1; overflow-y: auto; }
-        .sidebar-menu-fixed { list-style: none; border-top: 2px solid var(--divider-color); background: var(--card-bg); }
-        .sidebar-item { display: flex; align-items: center; gap: 15px; padding: 14px 20px; color: var(--text-dark); text-decoration: none; font-size: 14px; font-weight: 600; border-bottom: 1px solid var(--divider-color); cursor: pointer; }
-        .sidebar-icon { font-size: 18px; width: 24px; text-align: center; }
-        .sidebar-footer { padding: 12px 20px; font-size: 11px; color: var(--subtext-color); text-align: center; background: var(--bg-color); }
-
-        .bottom-nav { 
-            position: sticky; 
-            bottom: 0; 
-            width: 100%; 
-            max-width: 480px; 
-            background: var(--card-bg); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 10px 0; 
-            border-top: 1px solid var(--card-border); 
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
-            z-index: 1000; 
-            margin-top: auto;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--subtext-color); font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--main-green); }
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
 
         .notice-card { background: var(--card-bg); margin: 12px; padding: 10px 15px; border-radius: 12px; box-shadow: var(--card-shadow); border-left: 4px solid #d83b46; overflow: hidden; position: relative; }
         .notice-text { font-size: 13px; font-weight: 600; color: #d83b46; white-space: nowrap; display: inline-block; padding-left: 100%; animation: marquee 22s linear infinite; }
@@ -381,73 +348,10 @@
 </head>
 <body data-theme="light">
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <span class="sidebar-title">অফার ও নেভিগেশন</span>
-        <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
-    </div>
-    
-    <ul class="sidebar-menu-scrollable">
-        <li class="sidebar-item" onclick="toggleSidebar(); scrollToTop();">
-            <span class="sidebar-icon">🏠</span> <span>Home Page</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('rechargeModal');">
-            <span class="sidebar-icon">📱</span> <span>Recharge</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('driveModal');">
-            <span class="sidebar-icon">🎁</span> <span>Drive Offers</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('regularModal');">
-            <span class="sidebar-icon">📦</span> <span>Regular Offers</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('familyModal');">
-            <span class="sidebar-icon">👨‍👩‍👧‍👦</span> <span>Family Package</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('brilliantModal');">
-            <span class="sidebar-icon">📠</span> <span>Brilliant</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('alaapModal');">
-            <span class="sidebar-icon">📞</span> <span>Alaap</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('banglaCallModal');">
-            <span class="sidebar-icon">📲</span> <span>Bangla Call</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('payBillModal');">
-            <span class="sidebar-icon">🧾</span> <span>Pay Bill</span>
-        </li>
-        <li class="sidebar-item" onclick="openWhatsAppChat()">
-            <span class="sidebar-icon">💬</span> <span>Live Support (WhatsApp)</span>
-        </li>
-        <a href="tel:09649994440" class="sidebar-item" style="text-decoration:none;">
-            <span class="sidebar-icon">📞</span> <span>Helpline (09649994440)</span>
-        </a>
-    </ul>
-
-    <ul class="sidebar-menu-fixed">
-        <li class="sidebar-item" onclick="toggleSidebar(); openModal('langModal');">
-            <span class="sidebar-icon">🌐</span> <span id="langItemText">Language / ভাষা</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleSidebar(); showToast('টার্মস অ্যান্ড কন্ডিশনস: ১০০% বিশ্বস্ত সেবার নিশ্চয়তা।');">
-            <span class="sidebar-icon">📜</span> <span>Terms & Conditions</span>
-        </li>
-        <li class="sidebar-item" onclick="toggleTheme()">
-            <span class="sidebar-icon">🌙</span> <span>Dark Mode</span>
-        </li>
-    </ul>
-
-    <div class="sidebar-footer">
-        © Reseller Service Dashboard<br>
-        ভার্সন ২.০.০ | সার্বিক সহযোগিতায়
-    </div>
-</div>
-
 <div class="app-container">
     <div class="main-content">
         <div class="header">
             <div class="user-info">
-                <button class="header-menu-btn" onclick="toggleSidebar()">☰</button>
                 <span id="welcomeText">Hello Sir & Ma’am! 👋</span>
             </div>
             <div class="header-actions">
@@ -547,7 +451,7 @@
                 <div class="icon-circle">💬</div>
                 <span>Whatsapp</span>
             </div>
-            <div class="grid-item" onclick="window.open('https://t.me/','_blank')">
+            <div class="grid-item" onclick="window.open('https://t.me/TotalEnterprise','_blank')">
                 <div class="icon-circle">✈️</div>
                 <span>Telegram</span>
             </div>
@@ -560,34 +464,6 @@
                 <span>Call Now</span>
             </a>
         </div>
-    </div>
-
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="scrollToTop()">
-            <span class="nav-icon">🏠</span> Home
-        </div>
-        <div class="nav-item" onclick="openModal('driveModal')">
-            <span class="nav-icon">🎁</span> Offers
-        </div>
-        <div class="nav-item" onclick="openModal('rechargeModal')">
-            <span class="nav-icon">⚡</span> Recharge
-        </div>
-        <div class="nav-item" onclick="openWhatsAppChat()">
-            <span class="nav-icon">💬</span> Support
-        </div>
-    </div>
-</div>
-
-<!-- Language Modal -->
-<div id="langModal" class="modal" onclick="if(event.target === this) closeModal('langModal')">
-    <div class="modal-body">
-        <div class="modal-header">
-            <button class="modal-back-btn" onclick="closeModal('langModal')">← Back</button>
-            <h3>Select Language</h3>
-            <span class="close-btn" onclick="closeModal('langModal')">&times;</span>
-        </div>
-        <div class="dropdown-option" onclick="changeLanguage('bn')">🇧🇩 বাংলা (Bangla)</div>
-        <div class="dropdown-option" onclick="changeLanguage('en')">🇺🇸 English</div>
     </div>
 </div>
 
@@ -635,49 +511,10 @@
             <div class="filter-tab" onclick="filterByCategory('drive', 'CALLRATE', this)">Call Rate</div>
         </div>
 
-        <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন (যেমন: 30GB, 200 Min)..." onkeyup="searchOffers('drive')">
+        <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('drive')">
         
         <div class="offer-list" id="driveOfferList">
-            <div class="offer-card op-airtel" data-op="Airtel" data-cat="BUNDLES" onclick="selectOffer('Drive Offer', 'Airtel 200 Min + 30GB (30 Days)', '425', 'Airtel')">
-                <div class="operator-logo airtel-logo">Airtel</div>
-                <div class="offer-details">
-                    <div class="offer-title">200 Min + 30GB (30 Days)</div>
-                    <div class="offer-subtext">Amount: 590.00 | Commission: 165.00</div>
-                    <div class="offer-price">Offer price: ৳425</div>
-                </div>
-            </div>
-            <div class="offer-card op-gp" data-op="GP" data-cat="BUNDLES" onclick="selectOffer('Drive Offer', 'GP 50GB + 1000 Min (30 Days)', '799', 'GP')">
-                <div class="operator-logo gp-logo">GP</div>
-                <div class="offer-details">
-                    <div class="offer-title">50GB + 1000 Min (30 Days)</div>
-                    <div class="offer-subtext">Regular: 999.00 | Save: 200.00</div>
-                    <div class="offer-price">Offer price: ৳799</div>
-                </div>
-            </div>
-            <div class="offer-card op-robi" data-op="Robi" data-cat="INTERNET" onclick="selectOffer('Drive Offer', 'Robi 40GB Internet (30 Days)', '499', 'Robi')">
-                <div class="operator-logo robi-logo">Robi</div>
-                <div class="offer-details">
-                    <div class="offer-title">40GB Internet (30 Days)</div>
-                    <div class="offer-subtext">Regular: 649.00 | Save: 150.00</div>
-                    <div class="offer-price">Offer price: ৳499</div>
-                </div>
-            </div>
-            <div class="offer-card op-bl" data-op="BL" data-cat="MINUTES" onclick="selectOffer('Drive Offer', 'Banglalink 500 Minutes (30 Days)', '320', 'BL')">
-                <div class="operator-logo bl-logo">BL</div>
-                <div class="offer-details">
-                    <div class="offer-title">500 Minutes (30 Days)</div>
-                    <div class="offer-subtext">Regular: 399.00 | Save: 79.00</div>
-                    <div class="offer-price">Offer price: ৳320</div>
-                </div>
-            </div>
-            <div class="offer-card op-teletalk" data-op="Teletalk" data-cat="INTERNET" onclick="selectOffer('Drive Offer', 'Teletalk 25GB Internet (30 Days)', '299', 'Teletalk')">
-                <div class="operator-logo teletalk-logo">TT</div>
-                <div class="offer-details">
-                    <div class="offer-title">25GB Internet (30 Days)</div>
-                    <div class="offer-subtext">Regular: 399.00 | Save: 100.00</div>
-                    <div class="offer-price">Offer price: ৳299</div>
-                </div>
-            </div>
+            <!-- বর্তমানে ড্রাইভ অফার খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -729,22 +566,7 @@
         <input type="text" id="regularSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('regular')">
 
         <div class="offer-list" id="regularOfferList">
-            <div class="offer-card op-bl" data-op="BL" data-cat="INTERNET" onclick="selectOffer('Regular Offer', 'Banglalink 10GB Internet (7 Days)', '148', 'BL')">
-                <div class="operator-logo bl-logo">BL</div>
-                <div class="offer-details">
-                    <div class="offer-title">10GB Internet (7 Days)</div>
-                    <div class="offer-subtext">Amount: 148.00</div>
-                    <div class="offer-price">Price: ৳148</div>
-                </div>
-            </div>
-            <div class="offer-card op-gp" data-op="GP" data-cat="MINUTES" onclick="selectOffer('Regular Offer', 'GP 160 Minutes (7 Days)', '109', 'GP')">
-                <div class="operator-logo gp-logo">GP</div>
-                <div class="offer-details">
-                    <div class="offer-title">160 Minutes (7 Days)</div>
-                    <div class="offer-subtext">Amount: 109.00</div>
-                    <div class="offer-price">Price: ৳109</div>
-                </div>
-            </div>
+            <!-- বর্তমানে রেগুলার অফার খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -793,41 +615,10 @@
             <div class="filter-tab" onclick="filterByCategory('family', 'CALLRATE', this)">Call Rate</div>
         </div>
 
-        <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন (যেমন: 60GB, Family)..." onkeyup="searchOffers('family')">
+        <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('family')">
 
         <div class="offer-list" id="familyOfferList">
-            <div class="offer-card op-gp" data-op="GP" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'GP 60GB + 1000 Min (4 Members)', '1199', 'GP')">
-                <div class="operator-logo gp-logo">GP</div>
-                <div class="offer-details">
-                    <div class="offer-title">60GB + 1000 Min (4 Members)</div>
-                    <div class="offer-subtext">Validity: 30 Days</div>
-                    <div class="offer-price">Price: ৳1199</div>
-                </div>
-            </div>
-            <div class="offer-card op-robi" data-op="Robi" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'Robi 50GB + 800 Min (3 Members)', '999', 'Robi')">
-                <div class="operator-logo robi-logo">Robi</div>
-                <div class="offer-details">
-                    <div class="offer-title">50GB + 800 Min (3 Members)</div>
-                    <div class="offer-subtext">Validity: 30 Days</div>
-                    <div class="offer-price">Price: ৳999</div>
-                </div>
-            </div>
-            <div class="offer-card op-airtel" data-op="Airtel" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'Airtel 40GB + 600 Min (2 Members)', '799', 'Airtel')">
-                <div class="operator-logo airtel-logo">Airtel</div>
-                <div class="offer-details">
-                    <div class="offer-title">40GB + 600 Min (2 Members)</div>
-                    <div class="offer-subtext">Validity: 30 Days</div>
-                    <div class="offer-price">Price: ৳799</div>
-                </div>
-            </div>
-            <div class="offer-card op-bl" data-op="BL" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'BL 45GB + 700 Min (3 Members)', '899', 'BL')">
-                <div class="operator-logo bl-logo">BL</div>
-                <div class="offer-details">
-                    <div class="offer-title">45GB + 700 Min (3 Members)</div>
-                    <div class="offer-subtext">Validity: 30 Days</div>
-                    <div class="offer-price">Price: ৳899</div>
-                </div>
-            </div>
+            <!-- বর্তমানে ফ্যামিলি প্যাকেজ খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -1182,15 +973,6 @@
             showToast("কপি করা যায়নি, ম্যানুয়ালি করুন");
         }
         document.body.removeChild(textArea);
-    }
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('open');
     }
 
     function toggleTheme() {
@@ -1691,11 +1473,6 @@
     
     function openWhatsAppChat() {
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Hello`, '_blank');
-    }
-    
-    function changeLanguage(lang) {
-        showToast(lang === 'en' ? 'Language: English' : 'ভাষা: বাংলা');
-        closeModal('langModal');
     }
 </script>
 </body>
