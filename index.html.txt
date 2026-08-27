@@ -1,0 +1,1862 @@
+﻿<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reseller Dashboard & Offers</title>
+    <style>
+        :root {
+            --header-bg: linear-gradient(135deg, #d83b46 0%, #ff5252 100%);
+            --main-green: #00875a;
+            --main-green-grad: linear-gradient(135deg, #00875a 0%, #00b894 100%);
+            --bg-color: #f5f6fa;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --card-border: #e2e8f0;
+            --subtext-color: #666;
+            --input-bg: #ffffff;
+            --input-border: #ccc;
+            --divider-color: #e0e0e0;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+
+        [data-theme="dark"] {
+            --header-bg: linear-gradient(135deg, #8e1821 0%, #b52b35 100%);
+            --main-green: #00A86B;
+            --main-green-grad: linear-gradient(135deg, #00A86B 0%, #05c46b 100%);
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-dark: #e0e0e0;
+            --card-border: #2c2c2c;
+            --subtext-color: #aaa;
+            --input-bg: #2a2a2a;
+            --input-border: #444;
+            --divider-color: #333333;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            transition: background-color 0.3s, color 0.3s;
+            -webkit-text-size-adjust: 100%;
+        }
+
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            background-color: var(--bg-color); 
+            color: var(--text-dark);
+        }
+
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .app-container { 
+            width: 100%;
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: var(--bg-color); 
+            min-height: 100vh; 
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .main-content {
+            flex: 1;
+            padding-bottom: 20px;
+        }
+
+
+        .header { background: var(--header-bg); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; box-shadow: var(--card-shadow); }
+        .user-info { display: flex; align-items: center; gap: 12px; font-weight: bold; }
+        .header-menu-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .theme-toggle-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+
+
+        .sidebar-overlay, .modal { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0, 0, 0, 0.6) !important; 
+            z-index: 1500; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; 
+            opacity: 0; 
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease; 
+        }
+
+
+        [data-theme="dark"] .sidebar-overlay, 
+        [data-theme="dark"] .modal { background: rgba(0, 0, 0, 0.8) !important; }
+        .sidebar-overlay { z-index: 2000; }
+
+
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card-bg); z-index: 2001; box-shadow: 4px 0 15px rgba(0,0,0,0.2); transition: left 0.3s ease; display: flex; flex-direction: column; }
+        .sidebar.open { left: 0; }
+        .sidebar-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+        .sidebar-header { background: var(--header-bg); color: white; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-title { font-weight: bold; font-size: 16px; }
+        .sidebar-close { background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; }
+        .sidebar-menu-scrollable { list-style: none; flex-grow: 1; overflow-y: auto; }
+        .sidebar-menu-fixed { list-style: none; border-top: 2px solid var(--divider-color); background: var(--card-bg); }
+        .sidebar-item { display: flex; align-items: center; gap: 15px; padding: 14px 20px; color: var(--text-dark); text-decoration: none; font-size: 14px; font-weight: 600; border-bottom: 1px solid var(--divider-color); cursor: pointer; }
+        .sidebar-icon { font-size: 18px; width: 24px; text-align: center; }
+        .sidebar-footer { padding: 12px 20px; font-size: 11px; color: var(--subtext-color); text-align: center; background: var(--bg-color); }
+
+
+        .bottom-nav { 
+            position: sticky; 
+            bottom: 0; 
+            width: 100%; 
+            max-width: 480px; 
+            background: var(--card-bg); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px 0; 
+            border-top: 1px solid var(--card-border); 
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
+            z-index: 1000; 
+            margin-top: auto;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--subtext-color); font-size: 11px; font-weight: bold; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--main-green); }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+
+        .notice-card { background: var(--card-bg); margin: 12px; padding: 10px 15px; border-radius: 12px; box-shadow: var(--card-shadow); border-left: 4px solid #d83b46; overflow: hidden; position: relative; }
+        .notice-text { font-size: 13px; font-weight: 600; color: #d83b46; white-space: nowrap; display: inline-block; padding-left: 100%; animation: marquee 22s linear infinite; }
+        @keyframes marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+
+        .section-title { font-weight: bold; margin: 15px 12px 8px 12px; font-size: 15px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
+        .grid-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: var(--card-bg); margin: 0 12px; padding: 15px 10px; border-radius: 12px; box-shadow: var(--card-shadow); border: 1px solid var(--card-border); }
+        .grid-item { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; text-decoration: none; color: inherit; }
+        .icon-circle { width: 45px; height: 45px; border-radius: 50%; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 6px; border: 1px solid var(--card-border); }
+        .grid-item span { font-size: 11px; font-weight: 600; color: var(--text-dark); }
+
+
+        .welcome-card { background: var(--card-bg); margin: 15px 12px; padding: 16px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid var(--card-border); border-top: 5px solid var(--main-green); }
+        .welcome-header { font-size: 14px; font-weight: 700; color: var(--main-green); margin-bottom: 12px; text-align: center; }
+        .welcome-quote-box { font-size: 11.5px; color: var(--text-dark); background: var(--bg-color); padding: 10px; border-radius: 10px; margin-bottom: 12px; line-height: 1.5; text-align: center; font-weight: 500; border: 1px solid var(--card-border); }
+        .offer-highlights { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+        .offer-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--card-border); font-size: 12px; font-weight: 600; }
+        .offer-badge { background: var(--bg-color); color: var(--main-green); font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: bold; border: 1px solid var(--card-border); }
+        .banner-offer-box { background: var(--bg-color); border: 1.5px dashed #f5a623; border-radius: 10px; padding: 8px 10px; text-align: center; margin: 10px 0; }
+        .banner-offer-title { font-size: 12px; font-weight: 800; color: #d83b46; margin-bottom: 2px; }
+        .banner-offer-sub { font-size: 11.5px; font-weight: 700; color: #e65100; }
+        .banner-subtext { font-size: 11px; font-weight: 600; color: var(--text-dark); text-align: center; margin: 10px 0 6px 0; line-height: 1.4; }
+        .banner-notice { font-size: 10.5px; color: var(--subtext-color); text-align: center; margin-bottom: 12px; line-height: 1.4; font-weight: 500; }
+        
+        .contact-btn-group { display: flex; gap: 10px; }
+        .btn-custom { flex: 1; padding: 10px 6px; border-radius: 25px; font-size: 11.5px; font-weight: bold; color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-custom-wa { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); }
+        .btn-custom-call { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+
+
+        .history-card { background: var(--card-bg); margin: 0 12px 15px 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--card-border); box-shadow: var(--card-shadow); }
+        .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--divider-color); font-size: 12px; }
+        .history-item:last-child { border-bottom: none; }
+
+
+        .modal-body { 
+            background: #ffffff !important;
+            width: 100%; 
+            max-width: 480px; 
+            border-top-left-radius: 20px; 
+            border-top-right-radius: 20px; 
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            padding: 12px 16px 20px 16px; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            border: 1px solid var(--card-border) !important; 
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
+            transform: translateY(100%); 
+            transition: transform 0.35s cubic-bezier(0.1, 0.9, 0.2, 1); 
+            margin: 0 auto;
+        }
+
+
+        [data-theme="dark"] .modal-body {
+            background: #1e1e1e !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+
+        .modal.show { 
+            opacity: 1; 
+            visibility: visible; 
+            pointer-events: auto; 
+        }
+
+
+        .modal.show .modal-body {
+            transform: translateY(0);
+        }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 6px; margin-bottom: 8px; }
+        .modal-header h3 { font-size: 14.5px; }
+        .modal-back-btn { background: var(--bg-color); border: 1px solid var(--card-border); padding: 3px 8px; border-radius: 8px; font-weight: bold; font-size: 11px; color: var(--text-dark); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .close-btn { font-size: 20px; cursor: pointer; color: var(--subtext-color); }
+
+
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .op-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 6px 2px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+        .op-chip.active {
+            border-color: var(--main-green);
+            background: rgba(0, 135, 90, 0.1);
+            color: var(--main-green);
+        }
+        .op-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .op-gp-bg { background: #00a3e0; }
+        .op-robi-bg { background: #e2136e; }
+        .op-airtel-bg { background: #ff0000; }
+        .op-bl-bg { background: #ff6600; }
+        .op-teletalk-bg { background: #008000; }
+        .op-skitto-bg { background: #7b1fa2; }
+        .op-all-bg { background: #555; }
+
+
+        .filter-tab-bar {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+            padding-bottom: 4px;
+        }
+        .filter-tab {
+            padding: 5px 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+            color: var(--subtext-color);
+        }
+        .filter-tab.active {
+            background: var(--main-green);
+            color: white;
+            border-color: var(--main-green);
+        }
+
+
+        .form-input { width: 100%; padding: 8px 10px; margin-bottom: 6px; border: 1px solid #00b894; background-color: var(--input-bg); color: var(--text-dark); border-radius: 8px; outline: none; font-size: 12.5px; text-align: left; }
+        .form-input.input-error { border: 2px solid #d83b46 !important; background-color: #fff0f0 !important; }
+        [data-theme="dark"] .form-input.input-error { background-color: #3a1e1e !important; }
+        .error-msg { color: #d83b46; font-size: 10px; font-weight: bold; margin-top: -4px; margin-bottom: 6px; display: none; text-align: left; }
+        .error-msg.show { display: block; }
+
+
+        .btn-submit { width: 100%; background: #00875a; color: white; padding: 9px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 4px; font-size: 13px; text-transform: uppercase; }
+
+
+        .search-box { margin-bottom: 6px; text-align: left; }
+
+
+        .offer-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; }
+        .operator-logo { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 10px; color: white; flex-shrink: 0; }
+        .airtel-logo { background: #ff0000; }
+        .bl-logo { background: #ff6600; }
+        .gp-logo { background: #00a3e0; }
+        .robi-logo { background: #e2136e; }
+        .teletalk-logo { background: #008000; }
+        .skitto-logo { background: #7b1fa2; }
+        .offer-details { flex-grow: 1; }
+        .offer-title { font-size: 12.5px; font-weight: 700; color: var(--text-dark); }
+        .offer-subtext { font-size: 11px; color: var(--subtext-color); }
+        .offer-price { font-size: 12px; font-weight: bold; color: var(--main-green); }
+
+
+        .checkout-header {
+            background: #00875a;
+            color: white;
+            padding: 8px 12px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -12px -16px 8px -16px;
+        }
+
+
+        .checkout-header-title { font-size: 13.5px; font-weight: 700; }
+        .checkout-back-btn { background: rgba(255, 255, 255, 0.25); border: none; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10.5px; font-weight: bold; cursor: pointer; }
+
+
+        .summary-card-new { background: #ffebee; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+        [data-theme="dark"] .summary-card-new { background: #3c1e24; }
+        .summary-title-new { font-size: 11px; font-weight: bold; color: #555; margin-bottom: 2px; }
+        [data-theme="dark"] .summary-title-new { color: #ccc; }
+        .summary-send-money { font-size: 14px; font-weight: 800; color: #d83b46; }
+        .summary-amount-sub { font-size: 11px; color: #777; margin-top: 1px; }
+        [data-theme="dark"] .summary-amount-sub { color: #aaa; }
+
+
+        .payment-card-new { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 6px 10px; margin-bottom: 5px; border-radius: 6px; border: 1px solid #e0e0e0; border-left-width: 4px; gap: 8px; }
+        [data-theme="dark"] .payment-card-new { border-color: #333; }
+        .payment-card-new.bkash { border-left-color: #e2136e; }
+        .payment-card-new.nagad { border-left-color: #f7921e; }
+        .payment-card-new.rocket { border-left-color: #8c3494; }
+        .payment-card-new.upay { border-left-color: #ffc40c; }
+        
+        .payment-info-new { font-size: 11.5px; font-weight: 600; color: var(--text-dark); flex: 1; word-break: break-word; }
+        .copy-btn-new { background: #00875a; color: white; border: none; padding: 4px 10px; font-size: 10.5px; border-radius: 4px; font-weight: bold; cursor: pointer; flex-shrink: 0; }
+
+
+        .custom-dropdown { position: relative; margin-bottom: 6px; }
+        .dropdown-selected { width: 100%; padding: 8px 10px; border: 1px solid #00b894; border-radius: 8px; background: var(--input-bg); color: var(--text-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; text-align: left; }
+        .dropdown-selected::after { content: "▼"; font-size: 8px; color: var(--subtext-color); transition: transform 0.3s ease; }
+        
+        .dropdown-options { 
+            position: absolute; top: 100%; left: 0; width: 100%; background: var(--card-bg); 
+            border: 1px solid var(--input-border); border-radius: 8px; margin-top: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            z-index: 50; overflow-y: auto; max-height: 0; opacity: 0; visibility: hidden;
+            transition: max-height 0.3s ease, opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+
+        .custom-dropdown.open .dropdown-options { max-height: 180px; opacity: 1; visibility: visible; }
+        .custom-dropdown.open .dropdown-selected::after { transform: rotate(180deg); }
+        .dropdown-option { padding: 8px 10px; font-size: 11.5px; cursor: pointer; border-bottom: 1px solid var(--card-border); color: var(--text-dark); font-weight: 500; text-align: left; }
+        .dropdown-option:last-child { border-bottom: none; }
+        
+        .chip-group { display: flex; gap: 6px; margin-bottom: 6px; }
+        .chip { padding: 4px 10px; background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 8px; font-size: 10.5px; cursor: pointer; font-weight: bold; color: var(--subtext-color); }
+        .chip.active { background: var(--main-green); color: white; border-color: var(--main-green); }
+
+
+        .discount-display { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+            border: 1px solid #81c784; 
+            border-radius: 8px; 
+            padding: 6px 10px; 
+            margin-bottom: 6px; 
+            display: block; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        [data-theme="dark"] .discount-display {
+            background: linear-gradient(135deg, #1b382b 0%, #11261d 100%);
+            border-color: #2e7d32;
+        }
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--text-dark);
+        }
+        .calc-row:last-child {
+            margin-bottom: 0;
+            padding-top: 3px;
+            border-top: 1px dashed #a5d6a7;
+        }
+        [data-theme="dark"] .calc-row:last-child {
+            border-top-color: #2e7d32;
+        }
+        .calc-val { font-weight: 700; }
+        .highlight-val { color: #d83b46; font-weight: 800; }
+
+
+        #toast { visibility: hidden; min-width: 240px; background-color: #333; color: #fff; text-align: center; border-radius: 20px; padding: 8px 14px; position: fixed; z-index: 9999; left: 50%; bottom: 70px; transform: translateX(-50%); font-size: 11.5px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        #toast.show { visibility: visible; animation: fadeIn 0.4s, fadeOut 0.4s 2.5s; }
+        @keyframes fadeIn { from { bottom: 50px; opacity: 0; } to { bottom: 70px; opacity: 1; } }
+        @keyframes fadeOut { from { bottom: 70px; opacity: 1; } to { bottom: 50px; opacity: 0; } }
+    </style>
+</head>
+<body data-theme="light">
+
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="sidebar-title">অফার ও নেভিগেশন</span>
+        <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+    </div>
+    
+    <ul class="sidebar-menu-scrollable">
+        <li class="sidebar-item" onclick="toggleSidebar(); scrollToTop();">
+            <span class="sidebar-icon">🏠</span> <span>Home Page</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('rechargeModal');">
+            <span class="sidebar-icon">📱</span> <span>Recharge</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('driveModal');">
+            <span class="sidebar-icon">🎁</span> <span>Drive Offers</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('regularModal');">
+            <span class="sidebar-icon">📦</span> <span>Regular Offers</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('familyModal');">
+            <span class="sidebar-icon">👨‍👩‍👧‍👦</span> <span>Family Package</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('brilliantModal');">
+            <span class="sidebar-icon">📠</span> <span>Brilliant</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('alaapModal');">
+            <span class="sidebar-icon">📞</span> <span>Alaap</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('banglaCallModal');">
+            <span class="sidebar-icon">📲</span> <span>Bangla Call</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('payBillModal');">
+            <span class="sidebar-icon">🧾</span> <span>Pay Bill</span>
+        </li>
+        <li class="sidebar-item" onclick="openWhatsAppChat()">
+            <span class="sidebar-icon">💬</span> <span>Live Support (WhatsApp)</span>
+        </li>
+        <a href="tel:09649994440" class="sidebar-item" style="text-decoration:none;">
+            <span class="sidebar-icon">📞</span> <span>Helpline (09649994440)</span>
+        </a>
+    </ul>
+
+
+    <ul class="sidebar-menu-fixed">
+        <li class="sidebar-item" onclick="toggleSidebar(); openModal('langModal');">
+            <span class="sidebar-icon">🌐</span> <span id="langItemText">Language / ভাষা</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleSidebar(); showToast('টার্মস অ্যান্ড কন্ডিশনস: ১০০% বিশ্বস্ত সেবার নিশ্চয়তা।');">
+            <span class="sidebar-icon">📜</span> <span>Terms & Conditions</span>
+        </li>
+        <li class="sidebar-item" onclick="toggleTheme()">
+            <span class="sidebar-icon">🌙</span> <span>Dark Mode</span>
+        </li>
+    </ul>
+
+
+    <div class="sidebar-footer">
+        © Reseller Service Dashboard<br>
+        ভার্সন ২.০.০ | সার্বিক সহযোগিতায়
+    </div>
+</div>
+
+
+<div class="app-container">
+    <div class="main-content">
+        <div class="header">
+            <div class="user-info">
+                <button class="header-menu-btn" onclick="toggleSidebar()">☰</button>
+                <span id="welcomeText">Hello Sir & Ma’am! 👋</span>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
+                <span>🔔</span>
+            </div>
+        </div>
+
+
+        <div class="notice-card">
+            <div class="notice-text">
+                📢 প্রত্যেকটি অফার সফলভাবে সম্পন্ন হতে ২–৫ মিনিট সময় লাগতে পারে। অনুগ্রহ করে কিছুটা সময় দিয়ে আমাদের সহযোগিতা করুন ধন্যবাদ। 🌸
+            </div>
+        </div>
+
+
+        <div class="section-title">Quick Services</div>
+        <div class="grid-box">
+            <div class="grid-item" onclick="openModal('rechargeModal')">
+                <div class="icon-circle">📱</div>
+                <span>Recharge</span>
+            </div>
+            <div class="grid-item" onclick="openModal('driveModal')">
+                <div class="icon-circle">🎁</div>
+                <span>Drive Offers</span>
+            </div>
+            <div class="grid-item" onclick="openModal('regularModal')">
+                <div class="icon-circle">📦</div>
+                <span>Regular</span>
+            </div>
+            <div class="grid-item" onclick="openModal('familyModal')">
+                <div class="icon-circle">👨‍👩‍👧‍👦</div>
+                <span>Family Package</span>
+            </div>
+
+
+            <div class="grid-item" onclick="openModal('brilliantModal')">
+                <div class="icon-circle" style="color:#00a896; font-weight:bold;">📠</div>
+                <span>Brilliant</span>
+            </div>
+            <div class="grid-item" onclick="openModal('alaapModal')">
+                <div class="icon-circle" style="color:#ff6b6b; font-weight:bold;">📞</div>
+                <span>Alaap</span>
+            </div>
+            <div class="grid-item" onclick="openModal('banglaCallModal')">
+                <div class="icon-circle" style="color:#4ecdc4; font-weight:bold;">📲</div>
+                <span>Bangla call</span>
+            </div>
+            <div class="grid-item" onclick="openModal('payBillModal')">
+                <div class="icon-circle" style="color:#1a535c; font-weight:bold;">🧾</div>
+                <span>Pay bill</span>
+            </div>
+        </div>
+
+
+        <div class="welcome-card">
+            <div class="welcome-header">🌸 রিচার্জ পয়েন্টে আপনাদের সবাইকে আন্তরিক স্বাগতম 🌸</div>
+            <div class="welcome-quote-box">
+                💖 গরিব হতে পারি, কিন্তু ইনশাআল্লাহ কারো ১ টাকাও মেরে খাবো না।<br>
+                <b>আপনাদের বিশ্বাস ও ভালোবাসাই আমাদের সবচেয়ে বড় সম্পদ। 🤝</b>
+            </div>
+            <div class="offer-highlights">
+                <div class="offer-item">
+                    <span>📠 ব্রিলিয়ান্ট:</span>
+                    <span class="offer-badge">সব সময় ১৬%</span>
+                </div>
+                <div class="offer-item">
+                    <span>📲 বাংলা কল:</span>
+                    <span class="offer-badge">সব সময় ১৫%</span>
+                </div>
+                <div class="offer-item">
+                    <span>📞 আলাপ:</span>
+                    <span class="offer-badge">১৩০% ↑↓ আপ-ডাউন</span>
+                </div>
+            </div>
+            <div class="banner-offer-box">
+                <div class="banner-offer-title">💰 GP | BL | ROBI | AIRTEL | TELETALK</div>
+                <div class="banner-offer-sub">🎁 প্রতি ১,০০০ টাকায় পাবেন ৩০ টাকা বেশি!</div>
+            </div>
+            <div class="banner-subtext">🚀 সবচেয়ে সাশ্রয়ী দামে মিনিট, MB ও সব ধরনের স্পেশাল ড্রাইভ প্যাকেজ নিন যেকোনো সময়!</div>
+            <div class="banner-notice">📞 ব্যস্ততার কারণে মেসেজের উত্তর দিতে ৫ মিনিট এর বেশি দেরি হলে, অনুগ্রহ করে WhatsApp-এ কল করুন।</div>
+
+
+            <div class="contact-btn-group">
+                <a href="https://wa.me/8801610919737?text=%E0%A6%B9%E0%A7%8D%E0%A6%AF%E0%A6%B2%E0%A7%8B" target="_blank" class="btn-custom btn-custom-wa">
+                    💬 WhatsApp
+                </a>
+                <a href="tel:09649994440" class="btn-custom btn-custom-call">
+                    ☎️ 09649994440
+                </a>
+            </div>
+        </div>
+
+
+        <div class="section-title">Recent Orders (আপনার ডিভাইসে সেভকৃত)</div>
+        <div class="history-card" id="historyCard">
+            <div style="text-align:center; color: var(--subtext-color); font-size:12px;">কোনো সাম্প্রতিক অর্ডার নেই</div>
+        </div>
+
+
+        <div class="section-title">Link & Service</div>
+        <div class="grid-box">
+            <div class="grid-item" onclick="openWhatsAppChat()">
+                <div class="icon-circle">💬</div>
+                <span>Whatsapp</span>
+            </div>
+            <div class="grid-item" onclick="window.open('https://t.me/','_blank')">
+                <div class="icon-circle">✈️</div>
+                <span>Telegram</span>
+            </div>
+            <div class="grid-item" onclick="window.open('https://youtube.com','_blank')">
+                <div class="icon-circle">▶️</div>
+                <span>Youtube</span>
+            </div>
+            <a href="tel:09649994440" class="grid-item">
+                <div class="icon-circle">📞</div>
+                <span>Call Now</span>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="scrollToTop()">
+            <span class="nav-icon">🏠</span> Home
+        </div>
+        <div class="nav-item" onclick="openModal('driveModal')">
+            <span class="nav-icon">🎁</span> Offers
+        </div>
+        <div class="nav-item" onclick="openModal('rechargeModal')">
+            <span class="nav-icon">⚡</span> Recharge
+        </div>
+        <div class="nav-item" onclick="openWhatsAppChat()">
+            <span class="nav-icon">💬</span> Support
+        </div>
+    </div>
+</div>
+
+
+<!-- Language Modal -->
+<div id="langModal" class="modal" onclick="if(event.target === this) closeModal('langModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('langModal')">← Back</button>
+            <h3>Select Language</h3>
+            <span class="close-btn" onclick="closeModal('langModal')">&times;</span>
+        </div>
+        <div class="dropdown-option" onclick="changeLanguage('bn')">🇧🇩 বাংলা (Bangla)</div>
+        <div class="dropdown-option" onclick="changeLanguage('en')">🇺🇸 English</div>
+    </div>
+</div>
+
+
+<!-- Drive Offers Modal -->
+<div id="driveModal" class="modal" onclick="if(event.target === this) closeModal('driveModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('driveModal')">← Back</button>
+            <h3>Drive Offers</h3>
+            <span class="close-btn" onclick="closeModal('driveModal')">&times;</span>
+        </div>
+
+
+        <div class="operator-grid" id="driveOperatorGrid">
+            <div class="op-chip active" onclick="filterByOperator('drive', 'ALL', this)">
+                <div class="op-icon op-all-bg">ALL</div>
+                <span>All</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('drive', 'GP', this)">
+                <div class="op-icon op-gp-bg">GP</div>
+                <span>Grameen</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('drive', 'Robi', this)">
+                <div class="op-icon op-robi-bg">ROBI</div>
+                <span>Robi</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('drive', 'Airtel', this)">
+                <div class="op-icon op-airtel-bg">AT</div>
+                <span>Airtel</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('drive', 'BL', this)">
+                <div class="op-icon op-bl-bg">BL</div>
+                <span>Banglalink</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('drive', 'Teletalk', this)">
+                <div class="op-icon op-teletalk-bg">TT</div>
+                <span>Teletalk</span>
+            </div>
+        </div>
+
+
+        <div class="filter-tab-bar" id="driveFilterTabBar">
+            <div class="filter-tab active" onclick="filterByCategory('drive', 'ALL', this)">All</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'CALLRATE', this)">Call Rate</div>
+        </div>
+
+
+        <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন (যেমন: 30GB, 200 Min)..." onkeyup="searchOffers('drive')">
+        
+        <div class="offer-list" id="driveOfferList">
+            <div class="offer-card op-airtel" data-op="Airtel" data-cat="BUNDLES" onclick="selectOffer('Drive Offer', 'Airtel 200 Min + 30GB (30 Days)', '425', 'Airtel')">
+                <div class="operator-logo airtel-logo">Airtel</div>
+                <div class="offer-details">
+                    <div class="offer-title">200 Min + 30GB (30 Days)</div>
+                    <div class="offer-subtext">Amount: 590.00 | Commission: 165.00</div>
+                    <div class="offer-price">Offer price: ৳425</div>
+                </div>
+            </div>
+            <div class="offer-card op-gp" data-op="GP" data-cat="BUNDLES" onclick="selectOffer('Drive Offer', 'GP 50GB + 1000 Min (30 Days)', '799', 'GP')">
+                <div class="operator-logo gp-logo">GP</div>
+                <div class="offer-details">
+                    <div class="offer-title">50GB + 1000 Min (30 Days)</div>
+                    <div class="offer-subtext">Regular: 999.00 | Save: 200.00</div>
+                    <div class="offer-price">Offer price: ৳799</div>
+                </div>
+            </div>
+            <div class="offer-card op-robi" data-op="Robi" data-cat="INTERNET" onclick="selectOffer('Drive Offer', 'Robi 40GB Internet (30 Days)', '499', 'Robi')">
+                <div class="operator-logo robi-logo">Robi</div>
+                <div class="offer-details">
+                    <div class="offer-title">40GB Internet (30 Days)</div>
+                    <div class="offer-subtext">Regular: 649.00 | Save: 150.00</div>
+                    <div class="offer-price">Offer price: ৳499</div>
+                </div>
+            </div>
+            <div class="offer-card op-bl" data-op="BL" data-cat="MINUTES" onclick="selectOffer('Drive Offer', 'Banglalink 500 Minutes (30 Days)', '320', 'BL')">
+                <div class="operator-logo bl-logo">BL</div>
+                <div class="offer-details">
+                    <div class="offer-title">500 Minutes (30 Days)</div>
+                    <div class="offer-subtext">Regular: 399.00 | Save: 79.00</div>
+                    <div class="offer-price">Offer price: ৳320</div>
+                </div>
+            </div>
+            <div class="offer-card op-teletalk" data-op="Teletalk" data-cat="INTERNET" onclick="selectOffer('Drive Offer', 'Teletalk 25GB Internet (30 Days)', '299', 'Teletalk')">
+                <div class="operator-logo teletalk-logo">TT</div>
+                <div class="offer-details">
+                    <div class="offer-title">25GB Internet (30 Days)</div>
+                    <div class="offer-subtext">Regular: 399.00 | Save: 100.00</div>
+                    <div class="offer-price">Offer price: ৳299</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Regular Offers Modal -->
+<div id="regularModal" class="modal" onclick="if(event.target === this) closeModal('regularModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('regularModal')">← Back</button>
+            <h3>Regular Offers</h3>
+            <span class="close-btn" onclick="closeModal('regularModal')">&times;</span>
+        </div>
+
+
+        <div class="operator-grid" id="regularOperatorGrid">
+            <div class="op-chip active" onclick="filterByOperator('regular', 'ALL', this)">
+                <div class="op-icon op-all-bg">ALL</div>
+                <span>All</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('regular', 'GP', this)">
+                <div class="op-icon op-gp-bg">GP</div>
+                <span>Grameen</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('regular', 'Robi', this)">
+                <div class="op-icon op-robi-bg">ROBI</div>
+                <span>Robi</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('regular', 'Airtel', this)">
+                <div class="op-icon op-airtel-bg">AT</div>
+                <span>Airtel</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('regular', 'BL', this)">
+                <div class="op-icon op-bl-bg">BL</div>
+                <span>Banglalink</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('regular', 'Teletalk', this)">
+                <div class="op-icon op-teletalk-bg">TT</div>
+                <span>Teletalk</span>
+            </div>
+        </div>
+
+
+        <div class="filter-tab-bar" id="regularFilterTabBar">
+            <div class="filter-tab active" onclick="filterByCategory('regular', 'ALL', this)">All</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'CALLRATE', this)">Call Rate</div>
+        </div>
+
+
+        <input type="text" id="regularSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('regular')">
+
+
+        <div class="offer-list" id="regularOfferList">
+            <div class="offer-card op-bl" data-op="BL" data-cat="INTERNET" onclick="selectOffer('Regular Offer', 'Banglalink 10GB Internet (7 Days)', '148', 'BL')">
+                <div class="operator-logo bl-logo">BL</div>
+                <div class="offer-details">
+                    <div class="offer-title">10GB Internet (7 Days)</div>
+                    <div class="offer-subtext">Amount: 148.00</div>
+                    <div class="offer-price">Price: ৳148</div>
+                </div>
+            </div>
+            <div class="offer-card op-gp" data-op="GP" data-cat="MINUTES" onclick="selectOffer('Regular Offer', 'GP 160 Minutes (7 Days)', '109', 'GP')">
+                <div class="operator-logo gp-logo">GP</div>
+                <div class="offer-details">
+                    <div class="offer-title">160 Minutes (7 Days)</div>
+                    <div class="offer-subtext">Amount: 109.00</div>
+                    <div class="offer-price">Price: ৳109</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Family Package Modal -->
+<div id="familyModal" class="modal" onclick="if(event.target === this) closeModal('familyModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('familyModal')">← Back</button>
+            <h3>Family Package</h3>
+            <span class="close-btn" onclick="closeModal('familyModal')">&times;</span>
+        </div>
+
+
+        <div class="operator-grid" id="familyOperatorGrid">
+            <div class="op-chip active" onclick="filterByOperator('family', 'ALL', this)">
+                <div class="op-icon op-all-bg">ALL</div>
+                <span>All</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('family', 'GP', this)">
+                <div class="op-icon op-gp-bg">GP</div>
+                <span>Grameen</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('family', 'Robi', this)">
+                <div class="op-icon op-robi-bg">ROBI</div>
+                <span>Robi</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('family', 'Airtel', this)">
+                <div class="op-icon op-airtel-bg">AT</div>
+                <span>Airtel</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('family', 'BL', this)">
+                <div class="op-icon op-bl-bg">BL</div>
+                <span>Banglalink</span>
+            </div>
+            <div class="op-chip" onclick="filterByOperator('family', 'Teletalk', this)">
+                <div class="op-icon op-teletalk-bg">TT</div>
+                <span>Teletalk</span>
+            </div>
+        </div>
+
+
+        <div class="filter-tab-bar" id="familyFilterTabBar">
+            <div class="filter-tab active" onclick="filterByCategory('family', 'ALL', this)">All</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'CALLRATE', this)">Call Rate</div>
+        </div>
+
+
+        <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন (যেমন: 60GB, Family)..." onkeyup="searchOffers('family')">
+
+
+        <div class="offer-list" id="familyOfferList">
+            <div class="offer-card op-gp" data-op="GP" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'GP 60GB + 1000 Min (4 Members)', '1199', 'GP')">
+                <div class="operator-logo gp-logo">GP</div>
+                <div class="offer-details">
+                    <div class="offer-title">60GB + 1000 Min (4 Members)</div>
+                    <div class="offer-subtext">Validity: 30 Days</div>
+                    <div class="offer-price">Price: ৳1199</div>
+                </div>
+            </div>
+            <div class="offer-card op-robi" data-op="Robi" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'Robi 50GB + 800 Min (3 Members)', '999', 'Robi')">
+                <div class="operator-logo robi-logo">Robi</div>
+                <div class="offer-details">
+                    <div class="offer-title">50GB + 800 Min (3 Members)</div>
+                    <div class="offer-subtext">Validity: 30 Days</div>
+                    <div class="offer-price">Price: ৳999</div>
+                </div>
+            </div>
+            <div class="offer-card op-airtel" data-op="Airtel" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'Airtel 40GB + 600 Min (2 Members)', '799', 'Airtel')">
+                <div class="operator-logo airtel-logo">Airtel</div>
+                <div class="offer-details">
+                    <div class="offer-title">40GB + 600 Min (2 Members)</div>
+                    <div class="offer-subtext">Validity: 30 Days</div>
+                    <div class="offer-price">Price: ৳799</div>
+                </div>
+            </div>
+            <div class="offer-card op-bl" data-op="BL" data-cat="BUNDLES" onclick="selectOffer('Family Pack', 'BL 45GB + 700 Min (3 Members)', '899', 'BL')">
+                <div class="operator-logo bl-logo">BL</div>
+                <div class="offer-details">
+                    <div class="offer-title">45GB + 700 Min (3 Members)</div>
+                    <div class="offer-subtext">Validity: 30 Days</div>
+                    <div class="offer-price">Price: ৳899</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Target Phone Input for Selected Offer -->
+<div id="offerTargetModal" class="modal" onclick="if(event.target === this) closeModal('offerTargetModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('offerTargetModal')">← Back</button>
+            <h3 id="targetModalTitle">অফার গ্রহণের নম্বর</h3>
+            <span class="close-btn" onclick="closeModal('offerTargetModal')">&times;</span>
+        </div>
+        
+        <div style="font-size: 12px; margin-bottom: 8px; font-weight: 600; color: var(--main-green);" id="selectedOfferInfo">অফার: </div>
+
+
+        <input type="tel" id="offerTargetNumber" maxlength="11" inputmode="numeric" class="form-input" placeholder="মোবাইল নম্বর লিখুন (01XXXXXXXXX)" oninput="validateInputDynamic(this, 'offerTargetNumErr', 'phone');">
+        <div id="offerTargetNumErr" class="error-msg">অবশ্যই ১১ ডিজিটের সঠিক মোবাইল নম্বর দিন।</div>
+
+
+        <div class="chip-group" style="margin-top: 5px;">
+            <span class="chip active" onclick="selectChip(this)">Prepaid</span>
+            <span class="chip" onclick="selectChip(this)">Postpaid</span>
+        </div>
+
+
+        <button class="btn-submit" onclick="proceedOfferCheckout()">CONFIRM & NEXT</button>
+    </div>
+</div>
+
+
+<!-- Mobile Recharge Modal -->
+<div id="rechargeModal" class="modal" onclick="if(event.target === this) closeModal('rechargeModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('rechargeModal')">← Back</button>
+            <h3>Mobile Recharge</h3>
+            <span class="close-btn" onclick="closeModal('rechargeModal')">&times;</span>
+        </div>
+        <input type="tel" id="rechargeNumber" maxlength="11" inputmode="numeric" class="form-input" placeholder="Mobile Number (017XXXXXXXX)" oninput="detectOperator(this.value); validateInputDynamic(this, 'rechargeNumErr', 'phone');">
+        <div id="rechargeNumErr" class="error-msg">অবশ্যই ১১ ডিজিটের সঠিক মোবাইল নম্বর দিন।</div>
+
+
+        <div class="custom-dropdown" id="rechargeOpDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown('rechargeOpDropdown')">
+                <span id="rechargeOpText">GP - Grameenphone</span>
+            </div>
+            <div class="dropdown-options">
+                <div class="dropdown-option" onclick="selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'GP - Grameenphone')">GP - Grameenphone</div>
+                <div class="dropdown-option" onclick="selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'BL - Banglalink')">BL - Banglalink</div>
+                <div class="dropdown-option" onclick="selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'RB - Robi')">RB - Robi</div>
+                <div class="dropdown-option" onclick="selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'AT - Airtel')">AT - Airtel</div>
+                <div class="dropdown-option" onclick="selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'TT - Teletalk')">TT - Teletalk</div>
+            </div>
+        </div>
+        <div class="chip-group">
+            <span class="chip active" onclick="selectChip(this)">Prepaid</span>
+            <span class="chip" onclick="selectChip(this)">Postpaid</span>
+        </div>
+        <input type="tel" id="rechargeAmount" inputmode="numeric" class="form-input" placeholder="Recharge Amount (৳)" oninput="calculateDiscount(); validateInputDynamic(this, 'rechargeAmtErr', 'amount', 20);">
+        <div id="rechargeAmtErr" class="error-msg">সর্বনিম্ন রিচার্জ পরিমাণ ৳২০ হতে হবে।</div>
+        
+        <div id="discountInfo" class="discount-display">
+            <div class="calc-row">
+                <span>পেমেন্টের পরিমাণ:</span>
+                <span class="calc-val highlight-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>কমিশন যোগ হবে (৩%):</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>সর্বমোট ব্যালেন্স:</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+        </div>
+        
+        <button class="btn-submit" onclick="proceedRechargeNext()">NEXT</button>
+    </div>
+</div>
+
+
+<!-- Brilliant Modal -->
+<div id="brilliantModal" class="modal" onclick="if(event.target === this) closeModal('brilliantModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('brilliantModal')">← Back</button>
+            <h3>Brilliant Recharge</h3>
+            <span class="close-btn" onclick="closeModal('brilliantModal')">&times;</span>
+        </div>
+        <input type="tel" id="brilliantNumber" maxlength="11" inputmode="numeric" class="form-input" placeholder="Brilliant Number (096XXXXXXXX)" oninput="validateInputDynamic(this, 'brilliantNumErr', 'phone');">
+        <div id="brilliantNumErr" class="error-msg">অবশ্যই ১১ ডিজিটের ব্রিলিয়ান্ট নম্বর দিন।</div>
+
+
+        <input type="tel" id="brilliantAmount" inputmode="numeric" class="form-input" placeholder="Amount (৳)" oninput="calculateCommission('brilliantAmount', 'brilliantCommissionInfo', 0.16, 16); validateInputDynamic(this, 'brilliantAmtErr', 'amount', 50);">
+        <div id="brilliantAmtErr" class="error-msg">সর্বনিম্ন রিচার্জ পরিমাণ ৳৫০ হতে হবে।</div>
+        
+        <div id="brilliantCommissionInfo" class="discount-display">
+            <div class="calc-row">
+                <span>পেমেন্টের পরিমাণ:</span>
+                <span class="calc-val highlight-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>কমিশন যোগ হবে (১৬%):</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>সর্বমোট ব্যালেন্স:</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+        </div>
+
+
+        <button class="btn-submit" onclick="proceedServiceNext('Brilliant', 'brilliantNumber', 'brilliantAmount', 50)">NEXT</button>
+    </div>
+</div>
+
+
+<!-- Alaap Modal -->
+<div id="alaapModal" class="modal" onclick="if(event.target === this) closeModal('alaapModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('alaapModal')">← Back</button>
+            <h3>Alaap Recharge</h3>
+            <span class="close-btn" onclick="closeModal('alaapModal')">&times;</span>
+        </div>
+        <input type="tel" id="alaapNumber" maxlength="11" inputmode="numeric" class="form-input" placeholder="Alaap Number (096XXXXXXXX)" oninput="validateInputDynamic(this, 'alaapNumErr', 'phone');">
+        <div id="alaapNumErr" class="error-msg">অবশ্যই ১১ ডিজিটের আলাপ নম্বর দিন।</div>
+
+
+        <input type="tel" id="alaapAmount" inputmode="numeric" class="form-input" placeholder="Amount (৳)" oninput="calculateCommission('alaapAmount', 'alaapCommissionInfo', 0.30, 30); validateInputDynamic(this, 'alaapAmtErr', 'amount', 50);">
+        <div id="alaapAmtErr" class="error-msg">সর্বনিম্ন রিচার্জ পরিমাণ ৳৫০ হতে হবে।</div>
+        
+        <div id="alaapCommissionInfo" class="discount-display">
+            <div class="calc-row">
+                <span>পেমেন্টের পরিমাণ:</span>
+                <span class="calc-val highlight-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>কমিশন যোগ হবে (৩০%):</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>সর্বমোট ব্যালেন্স:</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+        </div>
+
+
+        <button class="btn-submit" onclick="proceedServiceNext('Alaap', 'alaapNumber', 'alaapAmount', 50)">NEXT</button>
+    </div>
+</div>
+
+
+<!-- Bangla Call Modal -->
+<div id="banglaCallModal" class="modal" onclick="if(event.target === this) closeModal('banglaCallModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('banglaCallModal')">← Back</button>
+            <h3>Bangla Call Recharge</h3>
+            <span class="close-btn" onclick="closeModal('banglaCallModal')">&times;</span>
+        </div>
+        <input type="tel" id="banglaNumber" maxlength="11" inputmode="numeric" class="form-input" placeholder="Bangla Call Number (096XXXXXXXX)" oninput="validateInputDynamic(this, 'banglaNumErr', 'phone');">
+        <div id="banglaNumErr" class="error-msg">অবশ্যই ১১ ডিজিটের বাংলা কল নম্বর দিন।</div>
+
+
+        <input type="tel" id="banglaAmount" inputmode="numeric" class="form-input" placeholder="Amount (৳)" oninput="calculateCommission('banglaAmount', 'banglaCommissionInfo', 0.15, 15); validateInputDynamic(this, 'banglaAmtErr', 'amount', 20);">
+        <div id="banglaAmtErr" class="error-msg">সর্বনিম্ন রিচার্জ পরিমাণ ৳২০ হতে হবে।</div>
+        
+        <div id="banglaCommissionInfo" class="discount-display">
+            <div class="calc-row">
+                <span>পেমেন্টের পরিমাণ:</span>
+                <span class="calc-val highlight-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>কমিশন যোগ হবে (১৫%):</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+            <div class="calc-row">
+                <span>সর্বমোট ব্যালেন্স:</span>
+                <span class="calc-val">৳০.০০</span>
+            </div>
+        </div>
+
+
+        <button class="btn-submit" onclick="proceedServiceNext('Bangla Call', 'banglaNumber', 'banglaAmount', 20)">NEXT</button>
+    </div>
+</div>
+
+
+<!-- Pay Bill Modal -->
+<div id="payBillModal" class="modal" onclick="if(event.target === this) closeModal('payBillModal')">
+    <div class="modal-body">
+        <div class="modal-header">
+            <button class="modal-back-btn" onclick="closeModal('payBillModal')">← Back</button>
+            <h3>Pay Bill</h3>
+            <span class="close-btn" onclick="closeModal('payBillModal')">&times;</span>
+        </div>
+        
+        <div class="custom-dropdown" id="billTypeDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown('billTypeDropdown')">
+                <span id="selectedCategoryText">Electricity Bill (বিদ্যুৎ)</span>
+            </div>
+            <div class="dropdown-options">
+                <div class="dropdown-option" onclick="selectCategory('Electricity', 'Electricity Bill (বিদ্যুৎ)')">Electricity Bill (বিদ্যুৎ)</div>
+                <div class="dropdown-option" onclick="selectCategory('Gas', 'Gas Bill (গ্যাস)')">Gas Bill (গ্যাস)</div>
+                <div class="dropdown-option" onclick="selectCategory('Water', 'Water Bill (পানি)')">Water Bill (পানি)</div>
+                <div class="dropdown-option" onclick="selectCategory('Internet', 'Internet Bill (ইন্টারনেট)')">Internet Bill (ইন্টারনেট)</div>
+            </div>
+        </div>
+
+
+        <div class="custom-dropdown" id="billerDropdown">
+            <div class="dropdown-selected" onclick="toggleDropdown('billerDropdown')">
+                <span id="selectedBillerText">BPDB Prepaid</span>
+            </div>
+            <div class="dropdown-options" id="billerOptions"></div>
+        </div>
+
+
+        <input type="text" id="billHolderName" class="form-input search-box" placeholder="কাস্টমার / হোল্ডার নেম (Customer Name)">
+        <input type="text" id="billAccNo" class="form-input search-box" placeholder="Account / Meter / Customer No">
+        <input type="tel" id="billMobileNo" maxlength="11" inputmode="numeric" class="form-input search-box" placeholder="মোবাইল নম্বর (01XXXXXXXXX)" oninput="this.value = this.value.replace(/\D/g, '').substring(0, 11)">
+        <input type="tel" id="billAmount" inputmode="numeric" class="form-input search-box" placeholder="Amount (৳)">
+        
+        <button class="btn-submit" onclick="proceedBillNext()">NEXT</button>
+    </div>
+</div>
+
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="modal" onclick="if(event.target === this) closeModal('checkoutModal')">
+    <div class="modal-body">
+        <div class="checkout-header">
+            <button class="checkout-back-btn" onclick="closeModal('checkoutModal')">← Back</button>
+            <div class="checkout-header-title">Checkout & Payment</div>
+            <span class="close-btn" style="color:white;" onclick="closeModal('checkoutModal')">&times;</span>
+        </div>
+
+
+        <div class="summary-card-new">
+            <div class="summary-title-new" id="summaryDetailsNew">RB - Robi (018)</div>
+            <div class="summary-send-money">Send Money: <span id="summarySendPrice">৳97.00</span></div>
+            <div class="summary-amount-sub" id="summaryMainAmount">Recharge amount: ৳100.00</div>
+        </div>
+
+
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-dark); margin: 3px 0 5px 0;">Send Money Numbers:</div>
+
+
+        <div class="payment-card-new bkash">
+            <span class="payment-info-new">bkash: <b id="bkashNum">01610919737</b></span>
+            <button class="copy-btn-new" onclick="copyToClipboard('bkashNum')">Copy</button>
+        </div>
+        <div class="payment-card-new nagad">
+            <span class="payment-info-new">Nagad: <b id="nagadNum">01610919737</b></span>
+            <button class="copy-btn-new" onclick="copyToClipboard('nagadNum')">Copy</button>
+        </div>
+        <div class="payment-card-new rocket">
+            <span class="payment-info-new">Rocket: <b id="rocketNum">01610919737</b></span>
+            <button class="copy-btn-new" onclick="copyToClipboard('rocketNum')">Copy</button>
+        </div>
+        <div class="payment-card-new upay">
+            <span class="payment-info-new">Upay: <b id="upayNum">01610919737</b></span>
+            <button class="copy-btn-new" onclick="copyToClipboard('upayNum')">Copy</button>
+        </div>
+
+
+        <div class="custom-dropdown" id="payMethodDropdown" style="margin-top: 6px;">
+            <div class="dropdown-selected" onclick="toggleDropdown('payMethodDropdown')">
+                <span id="selectedPayMethodText">💳 Select Payment Method (bKash / Nagad...)</span>
+            </div>
+            <div class="dropdown-options">
+                <div class="dropdown-option" onclick="selectPaymentMethodOption('bKash')">bKash (বিকাশ)</div>
+                <div class="dropdown-option" onclick="selectPaymentMethodOption('Nagad')">Nagad (নগদ)</div>
+                <div class="dropdown-option" onclick="selectPaymentMethodOption('Rocket')">Rocket (রকেট)</div>
+                <div class="dropdown-option" onclick="selectPaymentMethodOption('Upay')">Upay (উপায়)</div>
+            </div>
+        </div>
+
+
+        <input type="text" id="transactionIdInput" class="form-input" placeholder="TrxID / Transaction ID">
+
+
+        <button class="btn-submit" id="confirmOrderBtn" style="background: #00875a;" onclick="submitFinalOrderToGoogleForm()">
+            CONFIRM ORDER
+        </button>
+    </div>
+</div>
+
+
+<div id="toast">নোটিফিকেশন বার্তা</div>
+
+
+<script>
+    const WHATSAPP_NUMBER = "8801610919737";
+    let selectedCategoryVal = "Electricity";
+    let selectedBillerVal = "BPDB Prepaid";
+    let selectedPaymentMethod = "";
+    let selectedType = "Prepaid";
+
+
+    let activeFilter = {
+        drive: { op: 'ALL', cat: 'ALL' },
+        regular: { op: 'ALL', cat: 'ALL' },
+        family: { op: 'ALL', cat: 'ALL' }
+    };
+
+
+    let tempSelectedOffer = null;
+
+
+    const billerOptionsMap = {
+        Electricity: ["BPDB Prepaid", "BPDB Postpaid"],
+        Gas: ["Bakhrabad Gas"],
+        Water: ["Dhaka Wasa"],
+        Internet: ["Carnival", "Link 3", "MIME"]
+    };
+
+
+    let currentOrder = {
+        type: '', detail: '', price: '', mainAmount: '', accountNum: '', holderName: '', billerName: '', extraInfo: '', operator: ''
+    };
+
+
+    window.onload = function() {
+        renderHistory();
+        updateBillerOptions('Electricity');
+    };
+
+
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+    });
+
+
+    function openModal(id) {
+        let modal = document.getElementById(id);
+        if(!modal) return;
+        clearValidationErrors();
+        modal.classList.add('show');
+    }
+
+
+    function closeModal(id) {
+        let modal = document.getElementById(id);
+        if (!modal) return;
+        modal.classList.remove('show');
+        clearValidationErrors();
+    }
+
+
+    function showToast(msg) {
+        let toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.className = "show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+
+    function copyToClipboard(elementId) {
+        let textToCopy = document.getElementById(elementId).innerText;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("নম্বর কপি করা হয়েছে: " + textToCopy);
+            }).catch(() => { fallbackCopyTextToClipboard(textToCopy); });
+        } else {
+            fallbackCopyTextToClipboard(textToCopy);
+        }
+    }
+
+
+    function fallbackCopyTextToClipboard(text) {
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast("নম্বর কপি করা হয়েছে: " + text);
+        } catch (err) {
+            showToast("কপি করা যায়নি, ম্যানুয়ালি করুন");
+        }
+        document.body.removeChild(textArea);
+    }
+
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+
+
+    function toggleTheme() {
+        let body = document.body;
+        let themeBtn = document.getElementById('themeToggleBtn');
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.setAttribute('data-theme', 'light');
+            themeBtn.innerText = '🌙';
+            showToast('লাইট মোড সচল করা হয়েছে');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            themeBtn.innerText = '☀️';
+            showToast('ডার্ক মোড সচল করা হয়েছে');
+        }
+    }
+
+
+    function filterByOperator(section, opName, el) {
+        activeFilter[section].op = opName;
+        let parentGrid = el.parentElement;
+        parentGrid.querySelectorAll('.op-chip').forEach(chip => chip.classList.remove('active'));
+        el.classList.add('active');
+        applyCombinedFilter(section);
+    }
+
+
+    function filterByCategory(section, catName, el) {
+        activeFilter[section].cat = catName;
+        let parentBar = el.parentElement;
+        parentBar.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+        el.classList.add('active');
+        applyCombinedFilter(section);
+    }
+
+
+    function applyCombinedFilter(section) {
+        let containerId = section === 'drive' ? 'driveOfferList' : (section === 'regular' ? 'regularOfferList' : 'familyOfferList');
+        let cards = document.querySelectorAll(`#${containerId} .offer-card`);
+        let selectedOp = activeFilter[section].op;
+        let selectedCat = activeFilter[section].cat;
+
+
+        cards.forEach(card => {
+            let cardOp = card.getAttribute('data-op');
+            let cardCat = card.getAttribute('data-cat');
+
+
+            let matchOp = (selectedOp === 'ALL' || cardOp === selectedOp);
+            let matchCat = (selectedCat === 'ALL' || cardCat === selectedCat);
+
+
+            if (matchOp && matchCat) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+
+    function searchOffers(section) {
+        let inputId = section === 'drive' ? 'driveSearch' : (section === 'regular' ? 'regularSearch' : 'familySearch');
+        let containerId = section === 'drive' ? 'driveOfferList' : (section === 'regular' ? 'regularOfferList' : 'familyOfferList');
+        let filter = document.getElementById(inputId).value.toUpperCase();
+        let cards = document.querySelectorAll(`#${containerId} .offer-card`);
+        
+        cards.forEach(card => {
+            let title = card.querySelector('.offer-title').innerText;
+            if (title.toUpperCase().indexOf(filter) > -1) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+
+    function checkValidation(inputEl, errorElId, type, minAmt = 0) {
+        let errEl = document.getElementById(errorElId);
+        let val = inputEl.value.trim();
+        let isValid = true;
+
+
+        if (type === 'phone') {
+            val = val.replace(/\D/g, ''); 
+            if (val.length > 11) {
+                val = val.substring(0, 11);
+            }
+            inputEl.value = val;
+
+
+            if (val.length !== 11) {
+                isValid = false;
+            }
+        } else if (type === 'amount') {
+            let numVal = parseFloat(val);
+            if (isNaN(numVal) || numVal < minAmt) {
+                isValid = false;
+            }
+        }
+
+
+        if (!isValid) {
+            inputEl.classList.add('input-error');
+            if(errEl) errEl.classList.add('show');
+            return false;
+        } else {
+            inputEl.classList.remove('input-error');
+            if(errEl) errEl.classList.remove('show');
+            return true;
+        }
+    }
+
+
+    function validateInputDynamic(inputEl, errorElId, type, minAmt = 0) {
+        if (type === 'phone') {
+            inputEl.value = inputEl.value.replace(/\D/g, '');
+            if (inputEl.value.length > 11) {
+                inputEl.value = inputEl.value.substring(0, 11);
+            }
+        }
+        if (inputEl.classList.contains('input-error')) {
+            checkValidation(inputEl, errorElId, type, minAmt);
+        }
+    }
+
+
+    function clearValidationErrors() {
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('input-error'));
+        document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
+    }
+
+
+    function detectOperator(num) {
+        if(num.length >= 3) {
+            let prefix = num.substring(0, 3);
+            if(prefix === '017' || prefix === '013') selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'GP - Grameenphone');
+            else if(prefix === '018') selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'RB - Robi');
+            else if(prefix === '016') selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'AT - Airtel');
+            else if(prefix === '019' || prefix === '014') selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'BL - Banglalink');
+            else if(prefix === '015') selectGenericDropdown('rechargeOpDropdown', 'rechargeOpText', 'TT - Teletalk');
+        }
+    }
+
+
+    function renderHistory() {
+        let orders = JSON.parse(localStorage.getItem('recent_orders') || '[]');
+        let container = document.getElementById('historyCard');
+        if(orders.length === 0) return;
+        
+        container.innerHTML = orders.map(o => `
+            <div class="history-item">
+                <span><b>${o.type}</b> (${o.detail})</span>
+                <span style="color:var(--main-green); font-weight:bold;">৳${o.price} [${o.date}]</span>
+            </div>
+        `).join('');
+    }
+
+
+    function saveOrder(type, detail, price) {
+        let orders = JSON.parse(localStorage.getItem('recent_orders') || '[]');
+        orders.unshift({ type, detail, price, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
+        if(orders.length > 3) orders.pop();
+        localStorage.setItem('recent_orders', JSON.stringify(orders));
+        renderHistory();
+    }
+
+
+    function calculateDiscount() {
+        let amountInput = document.getElementById('rechargeAmount').value;
+        let discountInfo = document.getElementById('discountInfo');
+        let originalAmount = parseFloat(amountInput);
+        
+        if(!isNaN(originalAmount) && originalAmount > 0) {
+            let customerPay = (originalAmount * 0.97).toFixed(2);
+            let commAmount = (originalAmount * 0.03).toFixed(2);
+            let totalBal = originalAmount.toFixed(2);
+            
+            discountInfo.innerHTML = `
+                <div class="calc-row">
+                    <span>পেমেন্টের পরিমাণ:</span>
+                    <span class="calc-val highlight-val">৳${customerPay}</span>
+                </div>
+                <div class="calc-row">
+                    <span>কমিশন যোগ হবে (৩%):</span>
+                    <span class="calc-val">৳${commAmount}</span>
+                </div>
+                <div class="calc-row">
+                    <span>সর্বমোট ব্যালেন্স:</span>
+                    <span class="calc-val">৳${totalBal}</span>
+                </div>
+            `;
+        } else {
+            discountInfo.innerHTML = `
+                <div class="calc-row">
+                    <span>পেমেন্টের পরিমাণ:</span>
+                    <span class="calc-val highlight-val">৳০.০০</span>
+                </div>
+                <div class="calc-row">
+                    <span>কমিশন যোগ হবে (৩%):</span>
+                    <span class="calc-val">৳০.০০</span>
+                </div>
+                <div class="calc-row">
+                    <span>সর্বমোট ব্যালেন্স:</span>
+                    <span class="calc-val">৳০.০০</span>
+                </div>
+            `;
+        }
+    }
+
+
+    function calculateCommission(inputId, displayId, rate, percentLabel) {
+        let amountInput = document.getElementById(inputId).value;
+        let info = document.getElementById(displayId);
+        let amount = parseFloat(amountInput);
+
+
+        if(!isNaN(amount) && amount > 0) {
+            let commAmount = (amount * rate).toFixed(2);
+            let totalBal = (amount * (1 + rate)).toFixed(2);
+            
+            info.innerHTML = `
+                <div class="calc-row">
+                    <span>পেমেন্টের পরিমাণ:</span>
+                    <span class="calc-val highlight-val">৳${amount.toFixed(2)}</span>
+                </div>
+                <div class="calc-row">
+                    <span>কমিশন যোগ হবে (${percentLabel}%):</span>
+                    <span class="calc-val">৳${commAmount}</span>
+                </div>
+                <div class="calc-row">
+                    <span>সর্বমোট ব্যালেন্স:</span>
+                    <span class="calc-val">৳${totalBal}</span>
+                </div>
+            `;
+        } else {
+            info.innerHTML = `
+                <div class="calc-row">
+                    <span>পেমেন্টের পরিমাণ:</span>
+                    <span class="calc-val highlight-val">৳০.০০</span>
+                </div>
+                <div class="calc-row">
+                    <span>কমিশন যোগ হবে (${percentLabel}%):</span>
+                    <span class="calc-val">৳০.০০</span>
+                </div>
+                <div class="calc-row">
+                    <span>সর্বমোট ব্যালেন্স:</span>
+                    <span class="calc-val">৳০.০০</span>
+                </div>
+            `;
+        }
+    }
+
+
+    function selectPaymentMethodOption(method) {
+        selectedPaymentMethod = method;
+        document.getElementById('selectedPayMethodText').innerText = `💳 Payment Method: ${method}`;
+        document.getElementById('payMethodDropdown').classList.remove('open');
+    }
+
+
+    function openCheckoutModal(type, detail, price, mainAmt = '', accNum = '', extra = '', hName = '', bName = '', operator = '') {
+        currentOrder = { 
+            type, detail, price, mainAmount: mainAmt, accountNum: accNum, holderName: hName, billerName: bName, extraInfo: extra, operator: operator 
+        };
+        
+        document.getElementById('summaryDetailsNew').innerText = detail;
+        document.getElementById('summarySendPrice').innerText = `৳${price}`;
+        
+        let mainAmtElement = document.getElementById('summaryMainAmount');
+        if (mainAmt) {
+            mainAmtElement.style.display = 'block';
+            mainAmtElement.innerText = `Recharge amount: ৳${mainAmt}`;
+        } else {
+            mainAmtElement.style.display = 'none';
+        }
+
+
+        selectedPaymentMethod = "";
+        document.getElementById('selectedPayMethodText').innerText = "💳 Select Payment Method (bKash / Nagad...)";
+        document.getElementById('transactionIdInput').value = '';
+        
+        document.querySelectorAll('.modal').forEach(m => {
+            m.classList.remove('show');
+        });
+        openModal('checkoutModal');
+    }
+
+
+    function selectOffer(type, title, price, operator = '') {
+        tempSelectedOffer = { type, title, price, operator };
+        
+        document.getElementById('selectedOfferInfo').innerText = `অফার: ${title} (৳${price})`;
+        document.getElementById('offerTargetNumber').value = '';
+        
+        closeModal('driveModal');
+        closeModal('regularModal');
+        closeModal('familyModal');
+        
+        openModal('offerTargetModal');
+    }
+
+
+    function proceedOfferCheckout() {
+        let numEl = document.getElementById('offerTargetNumber');
+        let isValid = checkValidation(numEl, 'offerTargetNumErr', 'phone');
+        
+        if(!isValid) {
+            return showToast('অবশ্যই ১১ ডিজিটের সঠিক মোবাইল নম্বর দিন!');
+        }
+
+
+        let targetNumber = numEl.value.trim();
+        let detailsText = `${tempSelectedOffer.operator} - ${tempSelectedOffer.title} (${targetNumber}) [${selectedType}]`;
+        
+        openCheckoutModal(
+            tempSelectedOffer.type, 
+            detailsText, 
+            tempSelectedOffer.price, 
+            tempSelectedOffer.price, 
+            targetNumber, 
+            '', 
+            '', 
+            tempSelectedOffer.title, 
+            tempSelectedOffer.operator
+        );
+    }
+
+
+    function proceedRechargeNext() {
+        let numEl = document.getElementById('rechargeNumber');
+        let amtEl = document.getElementById('rechargeAmount');
+
+
+        let isNumValid = checkValidation(numEl, 'rechargeNumErr', 'phone');
+        let isAmtValid = checkValidation(amtEl, 'rechargeAmtErr', 'amount', 20);
+
+
+        if(!isNumValid || !isAmtValid) {
+            return showToast('সঠিক ১১ ডিজিটের নম্বর ও সর্বনিম্ন ৳২০ দিন!');
+        }
+
+
+        let number = numEl.value.trim();
+        let operator = document.getElementById('rechargeOpText').innerText;
+        let amount = parseFloat(amtEl.value);
+        let pay = (amount * 0.97).toFixed(2);
+        
+        openCheckoutModal('Mobile Recharge', `${operator} (${number}) [${selectedType}]`, pay, amount.toFixed(2), number, '', '', '', operator);
+    }
+
+
+    function proceedServiceNext(name, numId, amountId, minAmount) {
+        let numEl = document.getElementById(numId);
+        let amtEl = document.getElementById(amountId);
+
+
+        let errNumId = numId === 'brilliantNumber' ? 'brilliantNumErr' : (numId === 'alaapNumber' ? 'alaapNumErr' : 'banglaNumErr');
+        let errAmtId = amountId === 'brilliantAmount' ? 'brilliantAmtErr' : (amountId === 'alaapAmount' ? 'alaapAmtErr' : 'banglaAmtErr');
+
+
+        let isNumValid = checkValidation(numEl, errNumId, 'phone');
+        let isAmtValid = checkValidation(amtEl, errAmtId, 'amount', minAmount);
+
+
+        if(!isNumValid || !isAmtValid) {
+            return showToast(`সঠিক ১১ ডিজিটের নম্বর ও সর্বনিম্ন ৳${minAmount} দিন!`);
+        }
+
+
+        let num = numEl.value.trim();
+        let amount = parseFloat(amtEl.value);
+        
+        let rate = 0;
+        if (name === 'Brilliant') rate = 0.16;
+        else if (name === 'Alaap') rate = 0.30;
+        else if (name === 'Bangla Call') rate = 0.15;
+
+
+        let totalBalance = (amount * (1 + rate)).toFixed(2);
+        openCheckoutModal(name, `${name} (${num})`, amount.toFixed(2), totalBalance, num, '', '', name, name);
+    }
+
+
+    function updateBillerOptions(category) {
+        let list = billerOptionsMap[category] || [];
+        let container = document.getElementById('billerOptions');
+        container.innerHTML = list.map(b => `<div class="dropdown-option" onclick="selectBiller('${b}')">${b}</div>`).join('');
+        selectedBillerVal = list[0] || '';
+        document.getElementById('selectedBillerText').innerText = selectedBillerVal;
+    }
+
+
+    function selectCategory(val, text) {
+        selectedCategoryVal = val;
+        document.getElementById('selectedCategoryText').innerText = text;
+        document.getElementById('billTypeDropdown').classList.remove('open');
+        updateBillerOptions(val);
+    }
+
+
+    function selectBiller(biller) {
+        selectedBillerVal = biller;
+        document.getElementById('selectedBillerText').innerText = biller;
+        document.getElementById('billerDropdown').classList.remove('open');
+    }
+
+
+    function proceedBillNext() {
+        let holderName = document.getElementById('billHolderName').value.trim();
+        let accNo = document.getElementById('billAccNo').value.trim();
+        let mobileNo = document.getElementById('billMobileNo').value.trim();
+        let amount = parseFloat(document.getElementById('billAmount').value);
+        
+        if(!holderName) return showToast('কাস্টমার নেম লিখুন!');
+        if(!accNo) return showToast('অ্যাকাউন্ট / মিটার নম্বর লিখুন!');
+        if(mobileNo && mobileNo.length !== 11) return showToast('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন!');
+        if(isNaN(amount) || amount <= 0) return showToast('সঠিক বিল পরিমাণ লিখুন!');
+        
+        let detailsText = `${selectedBillerVal} (Acc: ${accNo}, Mob: ${mobileNo || 'N/A'})`;
+        openCheckoutModal('Pay Bill', detailsText, amount.toFixed(2), amount.toFixed(2), accNo, mobileNo, holderName, selectedBillerVal, selectedBillerVal);
+    }
+
+
+    function submitFinalOrderToGoogleForm() {
+        if(!selectedPaymentMethod) return showToast('অনুগ্রহ করে পেমেন্ট মেথড সিলেক্ট করুন!');
+
+
+        let trxId = document.getElementById('transactionIdInput').value.trim();
+        if(!trxId) return showToast('অনুগ্রহ করে ট্রানজেকশন ID বা পেমেন্ট নম্বর দিন!');
+
+
+        let submitBtn = document.getElementById('confirmOrderBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "SUBMITTING...";
+
+
+        saveOrder(currentOrder.type, currentOrder.detail.replace(/\n/g, " "), currentOrder.price);
+
+
+        let serviceType = currentOrder.type || '';
+        let operatorBiller = currentOrder.operator || currentOrder.billerName || '';
+        let rechargeType = (serviceType === 'Mobile Recharge' || serviceType === 'Drive Offer' || serviceType === 'Regular Offer' || serviceType === 'Family Pack') ? selectedType : 'N/A';
+        let accMobileNo = currentOrder.accountNum || '';
+        let mainAmount = currentOrder.mainAmount || currentOrder.price || '';
+        let sendMoneyAmount = currentOrder.price || '';
+        let payMethod = selectedPaymentMethod || '';
+        let extraNote = currentOrder.holderName ? `Holder: ${currentOrder.holderName}, Mobile: ${currentOrder.extraInfo || 'N/A'}` : (currentOrder.detail || '');
+
+
+        let webAppUrl = "https://script.google.com/macros/s/AKfycbwDGc9YqTRyyQhjGZE0wlAsGZIM4612kxwDUpLur6V2ySP8pKu9sApVbJ70UQksDjbZbg/exec";
+
+
+        let orderData = {
+            serviceType: serviceType,
+            operatorBiller: operatorBiller,
+            rechargeType: rechargeType,
+            accMobileNo: accMobileNo,
+            mainAmount: mainAmount,
+            sendMoneyAmount: sendMoneyAmount,
+            payMethod: payMethod,
+            trxId: trxId,
+            extraNote: extraNote
+        };
+
+
+        showToast('অর্ডার সাবমিট হচ্ছে...');
+
+
+        fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(() => {
+            showToast('অর্ডার সফলভাবে জমা হয়েছে!');
+            resetFormAndCloseModal();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('অর্ডার সাবমিট হয়েছে!');
+            resetFormAndCloseModal();
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "CONFIRM ORDER";
+        });
+    }
+
+
+    function resetFormAndCloseModal() {
+        closeModal('checkoutModal');
+        clearValidationErrors();
+        
+        document.getElementById('rechargeNumber').value = '';
+        document.getElementById('rechargeAmount').value = '';
+        calculateDiscount();
+
+
+        document.getElementById('offerTargetNumber').value = '';
+
+
+        document.getElementById('brilliantNumber').value = '';
+        document.getElementById('brilliantAmount').value = '';
+        calculateCommission('brilliantAmount', 'brilliantCommissionInfo', 0.16, 16);
+
+
+        document.getElementById('alaapNumber').value = '';
+        document.getElementById('alaapAmount').value = '';
+        calculateCommission('alaapAmount', 'alaapCommissionInfo', 0.30, 30);
+
+
+        document.getElementById('banglaNumber').value = '';
+        document.getElementById('banglaAmount').value = '';
+        calculateCommission('banglaAmount', 'banglaCommissionInfo', 0.15, 15);
+
+
+        document.getElementById('billHolderName').value = '';
+        document.getElementById('billAccNo').value = '';
+        document.getElementById('billMobileNo').value = '';
+        document.getElementById('billAmount').value = '';
+
+
+        document.getElementById('transactionIdInput').value = '';
+        selectedPaymentMethod = '';
+        document.getElementById('selectedPayMethodText').innerText = '💳 Select Payment Method (bKash / Nagad...)';
+    }
+
+
+    function selectChip(element) {
+        element.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        selectedType = element.innerText;
+    }
+
+
+    function toggleDropdown(id) { 
+        let target = document.getElementById(id);
+        let isOpen = target.classList.contains('open');
+        
+        document.querySelectorAll('.custom-dropdown').forEach(dp => dp.classList.remove('open'));
+        
+        if (!isOpen) {
+            target.classList.add('open');
+        }
+    }
+
+
+    function selectGenericDropdown(dpId, textId, text) {
+        document.getElementById(textId).innerText = text;
+        document.getElementById(dpId).classList.remove('open');
+    }
+    
+    function openWhatsAppChat() {
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Hello`, '_blank');
+    }
+    
+    function changeLanguage(lang) {
+        showToast(lang === 'en' ? 'Language: English' : 'ভাষা: বাংলা');
+        closeModal('langModal');
+    }
+</script>
+</body>
+</html>
