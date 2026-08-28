@@ -1536,6 +1536,22 @@
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=Hello`, '_blank');
     }
 </script>
+    <script>
+    let currentVersion = "1.0.1";
+
+    setInterval(async () => {
+        try {
+            const response = await fetch('version.json?' + new Date().getTime());
+            const data = await response.json();
+            if (data.version !== currentVersion) {
+                window.location.reload(true);
+            }
+        } catch (error) {
+            console.error("Error checking version:", error);
+        }
+    }, 60000); // Checks every 60 seconds
+    </script>
+    
 </body>
 </html>
 
