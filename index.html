@@ -164,7 +164,7 @@
 
         .operator-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 6px;
             margin-bottom: 10px;
         }
@@ -205,7 +205,6 @@
         .op-bl-bg { background: #ff6600; }
         .op-teletalk-bg { background: #008000; }
         .op-skitto-bg { background: #7b1fa2; }
-        .op-all-bg { background: #555; }
 
         .filter-tab-bar {
             display: flex;
@@ -303,7 +302,6 @@
         .dropdown-option { padding: 8px 10px; font-size: 11.5px; cursor: pointer; border-bottom: 1px solid var(--card-border); color: var(--text-dark); font-weight: 500; text-align: left; }
         .dropdown-option:last-child { border-bottom: none; }
 
-        /* প্রমিনেন্ট লাল (Red) পেমেন্ট ড্রপডাউন স্টাইল */
         .prominent-dropdown {
             margin-bottom: 12px !important;
             position: relative;
@@ -533,11 +531,7 @@
         </div>
 
         <div class="operator-grid" id="driveOperatorGrid">
-            <div class="op-chip active" onclick="filterByOperator('drive', 'ALL', this)">
-                <div class="op-icon op-all-bg">ALL</div>
-                <span>All</span>
-            </div>
-            <div class="op-chip" onclick="filterByOperator('drive', 'GP', this)">
+            <div class="op-chip active" onclick="filterByOperator('drive', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
@@ -560,8 +554,7 @@
         </div>
 
         <div class="filter-tab-bar" id="driveFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('drive', 'ALL', this)">All</div>
-            <div class="filter-tab" onclick="filterByCategory('drive', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab active" onclick="filterByCategory('drive', 'INTERNET', this)">Internet</div>
             <div class="filter-tab" onclick="filterByCategory('drive', 'MINUTES', this)">Minutes</div>
             <div class="filter-tab" onclick="filterByCategory('drive', 'BUNDLES', this)">Bundles</div>
             <div class="filter-tab" onclick="filterByCategory('drive', 'CALLRATE', this)">Call Rate</div>
@@ -570,7 +563,6 @@
         <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('drive')">
         
         <div class="offer-list" id="driveOfferList">
-            <!-- বর্তমানে ড্রাইভ অফার খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -585,11 +577,7 @@
         </div>
 
         <div class="operator-grid" id="regularOperatorGrid">
-            <div class="op-chip active" onclick="filterByOperator('regular', 'ALL', this)">
-                <div class="op-icon op-all-bg">ALL</div>
-                <span>All</span>
-            </div>
-            <div class="op-chip" onclick="filterByOperator('regular', 'GP', this)">
+            <div class="op-chip active" onclick="filterByOperator('regular', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
@@ -612,8 +600,7 @@
         </div>
 
         <div class="filter-tab-bar" id="regularFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('regular', 'ALL', this)">All</div>
-            <div class="filter-tab" onclick="filterByCategory('regular', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab active" onclick="filterByCategory('regular', 'INTERNET', this)">Internet</div>
             <div class="filter-tab" onclick="filterByCategory('regular', 'MINUTES', this)">Minutes</div>
             <div class="filter-tab" onclick="filterByCategory('regular', 'BUNDLES', this)">Bundles</div>
             <div class="filter-tab" onclick="filterByCategory('regular', 'CALLRATE', this)">Call Rate</div>
@@ -622,7 +609,6 @@
         <input type="text" id="regularSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('regular')">
 
         <div class="offer-list" id="regularOfferList">
-            <!-- বর্তমানে রেগুলার অফার খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -637,11 +623,7 @@
         </div>
 
         <div class="operator-grid" id="familyOperatorGrid">
-            <div class="op-chip active" onclick="filterByOperator('family', 'ALL', this)">
-                <div class="op-icon op-all-bg">ALL</div>
-                <span>All</span>
-            </div>
-            <div class="op-chip" onclick="filterByOperator('family', 'GP', this)">
+            <div class="op-chip active" onclick="filterByOperator('family', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
@@ -664,8 +646,7 @@
         </div>
 
         <div class="filter-tab-bar" id="familyFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('family', 'ALL', this)">All</div>
-            <div class="filter-tab" onclick="filterByCategory('family', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab active" onclick="filterByCategory('family', 'INTERNET', this)">Internet</div>
             <div class="filter-tab" onclick="filterByCategory('family', 'MINUTES', this)">Minutes</div>
             <div class="filter-tab" onclick="filterByCategory('family', 'BUNDLES', this)">Bundles</div>
             <div class="filter-tab" onclick="filterByCategory('family', 'CALLRATE', this)">Call Rate</div>
@@ -674,7 +655,6 @@
         <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('family')">
 
         <div class="offer-list" id="familyOfferList">
-            <!-- বর্তমানে ফ্যামিলি প্যাকেজ খালি রাখা হয়েছে -->
         </div>
     </div>
 </div>
@@ -902,7 +882,6 @@
             <div class="summary-amount-sub" id="summaryMainAmount">Recharge amount: ৳100.00</div>
         </div>
 
-        <!-- লাল ব্যাকগ্রাউন্ড ও 👉 নির্দেশক চিহ্ন বিশিষ্ট পেমেন্ট অপশন -->
         <div style="margin-top: 10px; font-size: 11.5px; font-weight: 800; color: #d83b46; text-align: left; margin-bottom: 4px;">
             ⚠️ ধাপ ১: পেমেন্ট মাধ্যম নির্বাচন করুন (আবশ্যক):
         </div>
@@ -956,9 +935,9 @@
     let selectedType = "Prepaid";
 
     let activeFilter = {
-        drive: { op: 'ALL', cat: 'ALL' },
-        regular: { op: 'ALL', cat: 'ALL' },
-        family: { op: 'ALL', cat: 'ALL' }
+        drive: { op: 'GP', cat: 'INTERNET' },
+        regular: { op: 'GP', cat: 'INTERNET' },
+        family: { op: 'GP', cat: 'INTERNET' }
     };
 
     let tempSelectedOffer = null;
@@ -1076,8 +1055,8 @@
             let cardOp = card.getAttribute('data-op');
             let cardCat = card.getAttribute('data-cat');
 
-            let matchOp = (selectedOp === 'ALL' || cardOp === selectedOp);
-            let matchCat = (selectedCat === 'ALL' || cardCat === selectedCat);
+            let matchOp = (cardOp === selectedOp);
+            let matchCat = (cardCat === selectedCat);
 
             if (matchOp && matchCat) {
                 card.style.display = "";
@@ -1549,9 +1528,8 @@
         } catch (error) {
             console.error("Error checking version:", error);
         }
-    }, 60000); // Checks every 60 seconds
+    }, 300000); // Checks every 5 minutes
     </script>
-    
+
 </body>
 </html>
-
