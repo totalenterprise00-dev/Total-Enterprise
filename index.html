@@ -1519,19 +1519,24 @@
 </script>
     <script>
     let currentVersion = "1.0.1";
+    const CHECK_INTERVAL = 5 * 60 * 1000; // ৫ মিনিট
 
     setInterval(async () => {
         try {
-            const response = await fetch('version.json?' + new Date().getTime());
+            // cache: 'no-store' ব্যবহার করলে ইউআরএল-এ ?timestamp না জোড়লেও চলে
+            const response = await fetch('version.json', { cache: 'no-store' });
             const data = await response.json();
-            if (data.version !== currentVersion) {
-                window.location.reload(true);
+
+            if (data.version && data.version !== currentVersion) {
+                console.log("New version detected, reloading...");
+                window.location.reload(); // স্ট্যান্ডার্ড রিলোড
             }
         } catch (error) {
             console.error("Error checking version:", error);
         }
-    }, 300000); // Checks every 5 minutes
-    </script>
+    }, CHECK_INTERVAL);
+</script>
+
 ​<script>
 const client = contentful.createClient({ space: 'aojftmpr19x7', accessToken: 'bZWqYmXHSJvyGDqdMpp1U503NYdQN2k2u2Y5N6Ff5SO' });
 client.getEntries({ content_type: 'package' }).then((response) => console.log(response.items)).catch(console.error);
