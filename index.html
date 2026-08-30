@@ -1530,6 +1530,9 @@
         }
     }, 300000); // Checks every 5 minutes
     </script>
-
+​<script>
+const client = contentful.createClient({ space: 'aojftmpr19x7', accessToken: 'bZWqYmXHSJvyGDqdMpp1U503NYdQN2k2u2Y5N6Ff5SO' });
+client.getEntries({ content_type: 'package' }).then((response) => console.log(response.items)).catch(console.error);
+</script>
 </body>
 </html>
