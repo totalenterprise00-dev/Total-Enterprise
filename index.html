@@ -1558,28 +1558,29 @@
 </head>
 <body>
 
-    <div id="package-container"></div>
+    <!-- Contentful SDK (যদি আগে থেকে যুক্ত না থাকে) -->
+<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 <script>
   const client = contentful.createClient({
     space: 'aojftmpr19x7',
     accessToken: 'bzWqYmXHSJvyGDqdMpp1U503NYdQn2k2u2Y5N6fF5SO'
   });
 
-  client.getEntries({ content_type: 'package' })
+  client.getEntries({ content_type: 'Package' })
     .then((response) => {
       const container = document.getElementById('package-container');
-      let html = '';
+      if (!container) return;
       
+      let html = '';
+
       response.items.forEach((item) => {
         const fields = item.fields;
-        
-        // Contentful-এর ফিল্ড অনুযায়ী ডাটা হ্যান্ডলিং
-        const packageName = fields.packageName || fields['Package name'] || '';
-        const price = fields.price || fields.Price || 0;
-        const discount = fields.discount || fields.Discount || 0;
-        
+
+        const packageName = fields['Package name'] || fields.packageName || '';
+        const price = fields.Price || fields.price || 0;
+        const discount = fields.Discount || fields.discount || 0;
+
         html += `
           <div class="package-item">
             <h3>${packageName}</h3>
@@ -1588,7 +1589,7 @@
           </div>
         `;
       });
-      
+
       container.innerHTML = html;
     })
     .catch(console.error);
