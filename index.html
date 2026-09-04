@@ -1558,9 +1558,11 @@
 </head>
 <body>
 
-    <!-- Contentful SDK (যদি আগে থেকে যুক্ত না থাকে) -->
-<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
+<!-- ১. প্যাকেজ শো করার কন্টেইনার (এটি যোগ করতে হবে) -->
+<div id="package-container"></div>
 
+<!-- ২. Contentful SDK ও স্ক্রিপ্ট -->
+<script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 <script>
   const client = contentful.createClient({
     space: 'aojftmpr19x7',
@@ -1570,7 +1572,10 @@
   client.getEntries({ content_type: 'Package' })
     .then((response) => {
       const container = document.getElementById('package-container');
-      if (!container) return;
+      if (!container) {
+        console.error("package-container পাওয়া যায়নি!");
+        return;
+      }
       
       let html = '';
 
@@ -1582,10 +1587,10 @@
         const discount = fields.Discount || fields.discount || 0;
 
         html += `
-          <div class="package-item">
+          <div class="package-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
             <h3>${packageName}</h3>
             <p>Price: ${price} Taka</p>
-            <p class="discount-highlight">Discount: ${discount}%</p>
+            <p style="font-size: 24px; font-weight: bold; color: #d83d3d;">Discount: ${discount}%</p>
           </div>
         `;
       });
@@ -1594,5 +1599,6 @@
     })
     .catch(console.error);
 </script>
+
 </body>
 </html>
