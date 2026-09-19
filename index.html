@@ -1534,6 +1534,7 @@
             console.error("Error checking version:", error);
         }
     }, CHECK_INTERVAL);
+        function filterOffers(operator, category) { fetch(url) .then(response => response.json()) .then(data => { const filteredData = data.filter(item => item['Operator'] === operator && item['Offer Type'] === category); const container = document.getElementById('driveOfferList'); container.innerHTML = ''; filteredData.forEach(item => { const card = <div class="card"><h3>${item['Offer Name']}</h3><p>Price: ${item['Price']} Tk</p></div>; container.innerHTML += card; }); }); }
 </script>
 
 </body>
