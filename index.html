@@ -1534,7 +1534,108 @@
             console.error("Error checking version:", error);
         }
     }, CHECK_INTERVAL);
-        function filterOffers(operator, category) { fetch(url) .then(response => response.json()) .then(data => { const filteredData = data.filter(item => item['Operator'] === operator && item['Offer Type'] === category); const container = document.getElementById('driveOfferList'); container.innerHTML = ''; filteredData.forEach(item => { const card = <div class="card"><h3>${item['Offer Name']}</h3><p>Price: ${item['Price']} Tk</p><p>Validity: ${item['Validity']} Hour</p></div>; container.innerHTML += card; }); }); }
-        </script>
+        <script>
+  // Google Apps Script Web App URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIm-lSS4PpTlR8AKbaIhMi-VG6eCcGHwaR3hH2J5sNQUA0K3-xx0uRIicoz6VOOgrs3w/exec";
+
+  let allOffers = [];
+  let currentCategory = 'Regular'; // Default category: Regular / Drive / Family
+  let currentOperator = 'GP';      // Default operator: GP / Robi / Airtel / Banglalink / Teletalk
+  let currentType = 'All';          // Default type: Minutes / Internet / Combo / Call Rate / All
+
+  // 1. Google Sheet Web App theke data fetch kora
+  async function fetchOffers() {
+    const container = document.getElementById('offerListContainer');
+    if (container) {
+      container.innerHTML = '<p style="text-align:center; padding: 20px; color: #666;">Data loading...</p>';
+    }
+
+    try {
+      const response = await fetch(SCRIPT_URL);
+      allOffers = await response.json();
+      console.log("Loaded Offers:", allOffers);
+      displayOffers();
+    } catch (error) {
+      console.error("Data fetch error:", error);
+      if (container) {
+        container.innerHTML = '<p style="text-align:center; color: red;">Data load korte somoshya hoyeche.</p>';
+      }
+    }
+  }
+
+  // 2. Data Filter & HTML rendering
+  function displayOffers() {
+    const container = document.getElementById('offerListContainer');
+    if (!container) return;
+
+    const searchInput = document.getElementById('searchInput');
+    const searchText = (searchInput ? searchInput.value : '').toLowerCase();
+
+    // Filtering logic based on Google Sheet headers
+    const filtered = allOffers.filter(item => {
+      const catMatch = !currentCategory || 
+        (item['Package Category'] && item['Package Category'].toString().trim().toLowerCase() === currentCategory.toLowerCase());
+      
+      const opMatch = !currentOperator || 
+        (item['Operator'] && item['Operator'].toString().trim().toLowerCase() === currentOperator.toLowerCase());
+      
+      const typeMatch = (currentType === 'All') || 
+        (item['Package Type'] && item['Package Type'].toString().trim().toLowerCase() === currentType.toLowerCase());
+
+      const desc = (item['Description'] || '').toString().toLowerCase();
+      const searchMatch = !searchText || desc.includes(searchText);
+
+      return catMatch && opMatch && typeMatch && searchMatch;
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="text-align:center; padding: 20px; color: #888;">Kono offer pawa jayni.</p>';
+      return;
+    }
+
+    // Dynamic offer card generation
+    container.innerHTML = filtered.map(offer => `
+      <div class="offer-card" style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px; margin-bottom: 12px; background: #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        <div style="font-weight: bold; font-size: 15px; color: #222;">${offer['Description'] || 'No Description'}</div>
+        <div style="font-size: 13px; color: #666; margin-top: 6px; display: flex; justify-content: space-between;">
+          <span>Validity: <b>${offer['Validity'] || 'N/A'}</b></span>
+          <span>Regular Price: ৳${offer['Price'] || 0}</span>
+        </div>
+        <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            ${offer['Discount Price'] ? `
+              <span style="font-size: 16px; color: #2e7d32; font-weight: bold;">৳${offer['Discount Price']}</span>
+              <span style="font-size: 12px; color: #d32f2f; margin-left: 5px;">(Save ৳${offer['Discount'] || 0})</span>
+            ` : `
+              <span style="font-size: 16px; color: #333; font-weight: bold;">৳${offer['Price'] || 0}</span>
+            `}
+          </div>
+          <button style="background: #00875a; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            Buy Now
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 3. Category, Operator & Type Switch Handler Functions
+  function setCategory(categoryName) {
+    currentCategory = categoryName;
+    displayOffers();
+  }
+
+  function setOperator(operatorName) {
+    currentOperator = operatorName;
+    displayOffers();
+  }
+
+  function setType(typeName) {
+    currentType = typeName;
+    displayOffers();
+  }
+
+  // Page load howar sathe sathe fetch korbe
+  window.addEventListener('DOMContentLoaded', fetchOffers);
+</script>
 </body>
 </html>
