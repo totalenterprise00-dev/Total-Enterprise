@@ -554,10 +554,10 @@
         </div>
 
         <div class="filter-tab-bar" id="driveFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('drive', 'INTERNET', this)">Internet</div>
-            <div class="filter-tab" onclick="filterByCategory('drive', 'MINUTES', this)">Minutes</div>
-            <div class="filter-tab" onclick="filterByCategory('drive', 'BUNDLES', this)">Bundles</div>
-            <div class="filter-tab" onclick="filterByCategory('drive', 'CALLRATE', this)">Call Rate</div>
+           <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
+            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
+            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
+            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
         </div>
 
         <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('drive')">
@@ -600,11 +600,10 @@
         </div>
 
         <div class="filter-tab-bar" id="regularFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('regular', '11', this)">Internet</div>
-            <div id="package-container"></div>
-            <div class="filter-tab" onclick="filterByCategory('regular', 'MINUTES', this)">Minutes</div>
-            <div class="filter-tab" onclick="filterByCategory('regular', 'BUNDLES', this)">Bundles</div>
-            <div class="filter-tab" onclick="filterByCategory('regular', 'CALLRATE', this)">Call Rate</div>
+            <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
+            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
+            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
+            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
         </div>
 
         <input type="text" id="regularSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('regular')">
@@ -647,10 +646,10 @@
         </div>
 
         <div class="filter-tab-bar" id="familyFilterTabBar">
-            <div class="filter-tab active" onclick="filterByCategory('family', 'INTERNET', this)">Internet</div>
-            <div class="filter-tab" onclick="filterByCategory('family', 'MINUTES', this)">Minutes</div>
-            <div class="filter-tab" onclick="filterByCategory('family', 'BUNDLES', this)">Bundles</div>
-            <div class="filter-tab" onclick="filterByCategory('family', 'CALLRATE', this)">Call Rate</div>
+            <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
+            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
+            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
+            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
         </div>
 
         <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('family')">
