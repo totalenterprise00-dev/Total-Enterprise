@@ -1534,7 +1534,7 @@
     }, CHECK_INTERVAL);
 </script>
     <script>
-  // State object to track active filters and cached data for each modal
+// State object to track active filters and cached data for each modal
 const modalState = {
     drive: { operator: 'GP', category: 'INTERNET', query: '' },
     regular: { operator: 'GP', category: 'INTERNET', query: '' },
@@ -1580,7 +1580,6 @@ function renderOffers(modalType, offerData) {
     const state = modalState[modalType];
     const container = document.getElementById(`${modalType}OfferList`);
 
-    // সংশোধিত ফিল্টারিং লজিক
     const filtered = offerData.filter(offer => {
         const matchesType = offer['Package Category'].toLowerCase() === modalType.toLowerCase();
         const matchesOp = offer.Operator.toLowerCase() === state.operator.toLowerCase();
