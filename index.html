@@ -531,33 +531,33 @@
         </div>
 
         <div class="operator-grid" id="driveOperatorGrid">
-            <div class="op-chip active" onclick="setOperator('GP')">
+            <div class="op-chip active" onclick="filterByOperator('drive', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Robi')">
+            <div class="op-chip" onclick="filterByOperator('drive', 'Robi', this)">
                 <div class="op-icon op-robi-bg">ROBI</div>
                 <span>Robi</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Airtel')">
+            <div class="op-chip" onclick="filterByOperator('drive', 'Airtel', this)">
                 <div class="op-icon op-airtel-bg">AT</div>
                 <span>Airtel</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Banglalink')">
+            <div class="op-chip" onclick="filterByOperator('drive', 'BL', this)">
                 <div class="op-icon op-bl-bg">BL</div>
                 <span>Banglalink</span>
             </div>
-          <div class="op-chip" onclick="setOperator('Teletalk')">
+            <div class="op-chip" onclick="filterByOperator('drive', 'Teletalk', this)">
                 <div class="op-icon op-teletalk-bg">TT</div>
                 <span>Teletalk</span>
             </div>
         </div>
 
         <div class="filter-tab-bar" id="driveFilterTabBar">
-           <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
-            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
-            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
-            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
+            <div class="filter-tab active" onclick="filterByCategory('drive', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('drive', 'CALLRATE', this)">Call Rate</div>
         </div>
 
         <input type="text" id="driveSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('drive')">
@@ -577,33 +577,33 @@
         </div>
 
         <div class="operator-grid" id="regularOperatorGrid">
-            <div class="op-chip active" onclick="setOperator('GP')">
+            <div class="op-chip active" onclick="filterByOperator('regular', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Robi')">
+            <div class="op-chip" onclick="filterByOperator('regular', 'Robi', this)">
                 <div class="op-icon op-robi-bg">ROBI</div>
                 <span>Robi</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Airtel')">
+            <div class="op-chip" onclick="filterByOperator('regular', 'Airtel', this)">
                 <div class="op-icon op-airtel-bg">AT</div>
                 <span>Airtel</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Banglalink')">
+            <div class="op-chip" onclick="filterByOperator('regular', 'BL', this)">
                 <div class="op-icon op-bl-bg">BL</div>
                 <span>Banglalink</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Teletalk')">
+            <div class="op-chip" onclick="filterByOperator('regular', 'Teletalk', this)">
                 <div class="op-icon op-teletalk-bg">TT</div>
                 <span>Teletalk</span>
             </div>
         </div>
 
         <div class="filter-tab-bar" id="regularFilterTabBar">
-            <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
-            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
-            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
-            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
+            <div class="filter-tab active" onclick="filterByCategory('regular', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('regular', 'CALLRATE', this)">Call Rate</div>
         </div>
 
         <input type="text" id="regularSearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('regular')">
@@ -623,33 +623,33 @@
         </div>
 
         <div class="operator-grid" id="familyOperatorGrid">
-            <div class="op-chip active" onclick="setOperator('GP')">
+            <div class="op-chip active" onclick="filterByOperator('family', 'GP', this)">
                 <div class="op-icon op-gp-bg">GP</div>
                 <span>Grameen</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Robi')">
+            <div class="op-chip" onclick="filterByOperator('family', 'Robi', this)">
                 <div class="op-icon op-robi-bg">ROBI</div>
                 <span>Robi</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Airtel')">
+            <div class="op-chip" onclick="filterByOperator('family', 'Airtel', this)">
                 <div class="op-icon op-airtel-bg">AT</div>
                 <span>Airtel</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Banglalink')">
+            <div class="op-chip" onclick="filterByOperator('family', 'BL', this)">
                 <div class="op-icon op-bl-bg">BL</div>
                 <span>Banglalink</span>
             </div>
-            <div class="op-chip" onclick="setOperator('Teletalk')">
+            <div class="op-chip" onclick="filterByOperator('family', 'Teletalk', this)">
                 <div class="op-icon op-teletalk-bg">TT</div>
                 <span>Teletalk</span>
             </div>
         </div>
 
         <div class="filter-tab-bar" id="familyFilterTabBar">
-            <div class="filter-tab active" onclick="setType('INTERNET')">INTERNET</div>
-            <div class="filter-tab" onclick="setType('MINUTES')">Minutes</div>
-            <div class="filter-tab" onclick="setType('BUNDLES')">Bundles</div>
-            <div class="filter-tab" onclick="setType('CALLRATE')">Call Rate</div>
+            <div class="filter-tab active" onclick="filterByCategory('family', 'INTERNET', this)">Internet</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'MINUTES', this)">Minutes</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'BUNDLES', this)">Bundles</div>
+            <div class="filter-tab" onclick="filterByCategory('family', 'CALLRATE', this)">Call Rate</div>
         </div>
 
         <input type="text" id="familySearch" class="form-input search-box" placeholder="🔍 সার্চ করুন..." onkeyup="searchOffers('family')">
@@ -658,7 +658,6 @@
         </div>
     </div>
 </div>
-
 <!-- Target Phone Input for Selected Offer -->
 <div id="offerTargetModal" class="modal" onclick="if(event.target === this) closeModal('offerTargetModal')">
     <div class="modal-body">
